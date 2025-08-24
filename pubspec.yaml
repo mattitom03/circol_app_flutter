@@ -1,5 +1,5 @@
 name: circol_app_flutter
-description: "A new Flutter project."
+description: "CircolApp convertita da Kotlin Android a Flutter"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -31,20 +31,57 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # UI e icone
   cupertino_icons: ^1.0.8
+  material_design_icons_flutter: ^7.0.7296
+
+  # Firebase per backend
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.1
+  cloud_firestore: ^6.0.0
+  firebase_storage: ^13.0.0
+  firebase_messaging: ^16.0.0
+
+  # Gestione stato
+  provider: ^6.1.2
+  riverpod: ^2.5.1
+  flutter_riverpod: ^2.5.1
+
+  # Navigazione
+  go_router: ^16.2.0
+  auto_route: ^10.1.2
+
+  # QR Code
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.2.1
+
+  # HTTP e networking
+  http: ^1.2.2
+  dio: ^5.7.0
+
+  # Immagini e media
+  cached_network_image: ^3.4.1
+  image_picker: ^1.1.2
+
+  # Utilità
+  intl: ^0.20.2
+  shared_preferences: ^2.3.2
+  uuid: ^4.5.1
+
+  # UI Components
+  flutter_staggered_grid_view: ^0.7.0
+  pull_to_refresh: ^2.0.0
+  shimmer: ^3.0.0
+
+  # Payments (se necessario)
+  # stripe_platform_interface: ^10.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.13
+  auto_route_generator: ^10.2.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
