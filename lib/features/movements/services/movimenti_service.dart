@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/movimento.dart';
+import '../../../core/models/movimento.dart';
 
 class MovimentiService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

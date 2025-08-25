@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
-import '../models/models.dart';
-import '../services/test_data_service.dart';
+import '../../../core/models/models.dart';
+import '../../../core/services/test_data_service.dart';
+import '../../products/services/product_service.dart';
+import 'dart:io';
 
 
 /// ViewModel per gestire lo stato dell'autenticazione e tutti i dati dell'app
 class AuthViewModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
   final TestDataService _testDataService = TestDataService();
+  final ProductService _productService = ProductService();
 
   AuthResult _authResult = const AuthIdle();
   User? _currentUser;
@@ -29,24 +32,37 @@ class AuthViewModel extends ChangeNotifier {
 
   // Getters per lo stato di autenticazione
   AuthResult get authResult => _authResult;
+
   User? get currentUser => _currentUser;
+
   UserRole get currentUserRole => _currentUserRole;
+
   bool get isLoggedIn => _currentUser != null;
+
   bool get isAdmin => _currentUserRole == UserRole.admin;
+
   bool get isLoading => _authResult is AuthLoading;
 
   // Getters per i dati dell'app
   Map<String, dynamic> get allAppData => _allAppData;
+
   List<Evento> get tuttiEventi => _tuttiEventi;
+
   List<Evento> get eventiUtente => _eventiUtente;
+
   List<Movimento> get movimenti => _movimenti;
+
   List<Product> get prodotti => _prodotti;
+
   List<Map<String, dynamic>> get chatMessages => _chatMessages;
+
   List<Map<String, dynamic>> get notifiche => _notifiche;
 
   // Getters per dati admin
   List<User> get allUsers => _allUsers;
+
   List<Movimento> get allMovimenti => _allMovimenti;
+
   List<Map<String, dynamic>> get orderHistory => _orderHistory;
 
   /// Effettua il login E carica tutti i dati
@@ -64,7 +80,8 @@ class AuthViewModel extends ChangeNotifier {
       // Carica tutti i dati dall'AuthResult
       _loadAllDataFromResult(result);
 
-      print('Login completato con ${_tuttiEventi.length} eventi, ${_movimenti.length} movimenti, ${_prodotti.length} prodotti');
+      print('Login completato con ${_tuttiEventi.length} eventi, ${_movimenti
+          .length} movimenti, ${_prodotti.length} prodotti');
     }
 
     notifyListeners();
@@ -80,7 +97,8 @@ class AuthViewModel extends ChangeNotifier {
     _eventiUtente = _allAppData['eventiUtente'] as List<Evento>? ?? [];
     _movimenti = _allAppData['movimenti'] as List<Movimento>? ?? [];
     _prodotti = _allAppData['prodotti'] as List<Product>? ?? [];
-    _chatMessages = _allAppData['chatMessages'] as List<Map<String, dynamic>>? ?? [];
+    _chatMessages =
+        _allAppData['chatMessages'] as List<Map<String, dynamic>>? ?? [];
     _notifiche = _allAppData['notifiche'] as List<Map<String, dynamic>>? ?? [];
 
     print('📊 DATI CARICATI NELL\'AUTHVIEWMODEL:');
@@ -95,7 +113,8 @@ class AuthViewModel extends ChangeNotifier {
     if (isAdmin) {
       _allUsers = _allAppData['allUsers'] as List<User>? ?? [];
       _allMovimenti = _allAppData['allMovimenti'] as List<Movimento>? ?? [];
-      _orderHistory = _allAppData['orderHistory'] as List<Map<String, dynamic>>? ?? [];
+      _orderHistory =
+          _allAppData['orderHistory'] as List<Map<String, dynamic>>? ?? [];
 
       print('👨‍💼 DATI ADMIN CARICATI:');
       print('   👥 Tutti gli utenti: ${_allUsers.length}');
@@ -106,7 +125,8 @@ class AuthViewModel extends ChangeNotifier {
     // Aggiorna il saldo dell'utente se disponibile
     final saldoAggiornato = _allAppData['saldoAggiornato'] as double?;
     if (saldoAggiornato != null && _currentUser != null) {
-      print('💳 Aggiornamento saldo utente: €${saldoAggiornato.toStringAsFixed(2)}');
+      print('💳 Aggiornamento saldo utente: €${saldoAggiornato.toStringAsFixed(
+          2)}');
       _currentUser = _currentUser!.copyWith(
         saldo: saldoAggiornato,
         movimenti: _movimenti,
@@ -193,9 +213,9 @@ class AuthViewModel extends ChangeNotifier {
 
           // Crea un AuthSuccess sicuro per caricare i dati
           final successResult = AuthSuccess(
-            user: user,
-            userRole: user.ruolo,
-            allData: allUserData
+              user: user,
+              userRole: user.ruolo,
+              allData: allUserData
           );
           _loadAllDataFromResult(successResult);
 
@@ -233,9 +253,9 @@ class AuthViewModel extends ChangeNotifier {
       final allUserData = await _authService.getCurrentUserData();
       if (allUserData != null) {
         final fakeResult = AuthSuccess(
-          user: _currentUser!,
-          userRole: _currentUserRole,
-          allData: allUserData
+            user: _currentUser!,
+            userRole: _currentUserRole,
+            allData: allUserData
         );
         _loadAllDataFromResult(fakeResult);
         notifyListeners();
@@ -284,4 +304,27 @@ class AuthViewModel extends ChangeNotifier {
   /// Ottieni prodotti disponibili
   List<Product> get prodottiDisponibili =>
       _prodotti.where((p) => p.isAvailable).toList();
+
+  Future<void> updateProduct(Product product) async {
+    try {
+      // Chiama il service per aggiornare il dato su Firestore
+      await _productService.updateProduct(product);
+
+      // Aggiorna la lista locale per riflettere subito la modifica nella UI
+      final index = _prodotti.indexWhere((p) => p.id == product.id);
+      if (index != -1) {
+        _prodotti[index] = product;
+        notifyListeners(); // Notifica la UI del cambiamento
+      }
+    } catch (e) {
+      print('Errore durante l\'aggiornamento del prodotto: $e');
+      // Rilancia l'errore così la UI può mostrarlo
+      throw Exception('Salvataggio fallito');
+    }
+  }
+
+  Future<String> uploadProductImage(File imageFile, String productId) {
+    // Delega semplicemente la chiamata al service
+    return _productService.uploadProductImage(imageFile, productId);
+  }
 }

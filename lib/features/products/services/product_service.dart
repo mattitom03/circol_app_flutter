@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/product.dart';
+import '../../../core/models/product.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProductService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String _collectionPath = 'products'; // Nome della tua collezione prodotti
 
   /// Recupera tutti i prodotti disponibili (versione semplificata)
   Future<List<Product>> getAllProducts() async {
@@ -71,7 +74,7 @@ class ProductService {
       return true;
     } catch (e) {
       print('Errore nell\'aggiornamento prodotto: $e');
-      return false;
+      rethrow;
     }
   }
 
@@ -99,5 +102,27 @@ class ProductService {
         .map((snapshot) => snapshot.docs
             .map((doc) => Product.fromMap(doc.data(), documentId: doc.id))
             .toList());
+  }
+
+  /// Carica un'immagine su Firebase Storage e ritorna il suo URL di download.
+  Future<String> uploadProductImage(File imageFile, String productId) async {
+    try {
+      // 1. Crea un riferimento al percorso in cui salvare il file
+      // Es: product_images/ID_PRODOTTO.jpg
+      final ref = FirebaseStorage.instance
+          .ref('product_images')
+          .child('$productId.jpg');
+
+      // 2. Carica il file
+      await ref.putFile(imageFile);
+
+      // 3. Ottieni l'URL per scaricare il file
+      final downloadUrl = await ref.getDownloadURL();
+
+      return downloadUrl;
+    } on FirebaseException catch (e) {
+      print("Errore durante l'upload dell'immagine: $e");
+      throw Exception("Errore nel caricamento dell'immagine.");
+    }
   }
 }

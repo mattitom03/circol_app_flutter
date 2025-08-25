@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/models.dart';
-import 'firestore_data_service.dart';
+import '../../../core/models/models.dart';
+import '../../../core/services/firestore_data_service.dart';
 
 /// Servizio per gestire l'autenticazione con Firebase
 class AuthService {

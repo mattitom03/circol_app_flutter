@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../viewmodels/auth_viewmodel.dart';
-import '../../models/user.dart';
-import '../movimenti_screen.dart';
+import '../auth/viewmodels/auth_viewmodel.dart';
+import '../../core/models/user.dart';
+import '../movements/screen/movimenti_screen.dart';
 
 class HomeFragment extends StatefulWidget {
   const HomeFragment({super.key});

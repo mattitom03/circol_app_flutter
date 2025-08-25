@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import '../../viewmodels/auth_viewmodel.dart';
+import '../features/auth/viewmodels/auth_viewmodel.dart';
 
 class QrCodeFragment extends StatefulWidget {
   const QrCodeFragment({super.key});

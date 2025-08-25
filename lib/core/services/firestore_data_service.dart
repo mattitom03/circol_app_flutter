@@ -3,9 +3,9 @@ import '../models/user.dart';
 import '../models/movimento.dart';
 import '../models/evento.dart';
 import '../models/product.dart';
-import 'eventi_service.dart';
-import 'movimenti_service.dart';
-import 'product_service.dart';
+import '../../features/events/services/eventi_service.dart';
+import '../../features/movements/services/movimenti_service.dart';
+import '../../features/products/services/product_service.dart';
 
 class FirestoreDataService {
   final EventiService _eventiService = EventiService();

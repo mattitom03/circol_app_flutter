@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/evento.dart';
+import '../../../core/models/evento.dart';
 
 class EventiService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

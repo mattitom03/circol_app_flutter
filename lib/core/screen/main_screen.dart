@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/user_role.dart';
-import 'fragments/home_fragment.dart';
-import 'fragments/eventi_fragment.dart';
-import 'fragments/product_catalog_fragment.dart';
-import 'fragments/profilo_fragment.dart';
-import 'fragments/chat_fragment.dart';
-import 'fragments/qr_code_fragment.dart';
-import 'fragments/notifiche_fragment.dart';
+import '../../features/home/home_fragment.dart';
+import '../../features/events/screen/eventi_fragment.dart';
+import '../../features/products/screen/product_catalog_fragment.dart';
+import '../../features/profile/profilo_fragment.dart';
+import '../../screens/chat_fragment.dart';
+import '../../screens/qr_code_fragment.dart';
+import '../../screens/notifiche_fragment.dart';
+import '../../features/orders/screen/order_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final UserRole userRole;
@@ -37,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
       _pages = [
         const ProductCatalogFragment(),
         const EventiFragment(),
-        const ChatFragment(),
+        const OrdersScreen(),
         const NotificheFragment(),
         const ProfiloFragment(),
       ];
@@ -52,8 +53,8 @@ class _MainScreenState extends State<MainScreen> {
           label: 'Eventi',
         ),
         const BottomNavigationBarItem(
-          icon: Icon(Icons.chat),
-          label: 'Chat',
+          icon: Icon(Icons.receipt_long),
+          label: 'Ordini',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.notifications),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import '../../models/product.dart';
-import '../../viewmodels/auth_viewmodel.dart';
+import '../../../core/models/product.dart';
+import '../../auth/viewmodels/auth_viewmodel.dart';
+import 'package:provider/provider.dart';
+import 'edit_product_screen.dart';
 
 class ProductCatalogFragment extends StatefulWidget {
   const ProductCatalogFragment({super.key});
@@ -62,11 +64,21 @@ class _ProductCatalogFragmentState extends State<ProductCatalogFragment> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // TODO: Navigare ad AddProduct per admin
-              _showAddProductDialog();
+          // Usa un Consumer qui o accedi al ViewModel se sei già dentro un builder
+          Consumer<AuthViewModel>(
+            builder: (context, authViewModel, child) {
+              // Mostra il pulsante solo se l'utente è un admin
+              if (authViewModel.isAdmin) {
+                return IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    _showAddProductDialog();
+                  },
+                );
+              } else {
+                // Altrimenti non mostrare nulla
+                return const SizedBox.shrink();
+              }
             },
           ),
         ],
@@ -185,13 +197,27 @@ class _ProductCatalogFragmentState extends State<ProductCatalogFragment> {
   }
 
   Widget _buildProductCard(Product product) {
+    final authViewModel = context.read<AuthViewModel>();
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => _showProductDetails(product),
+        onTap: (){
+          if (authViewModel.isAdmin) {
+            // Se è admin, naviga alla schermata di modifica
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditProductScreen(product: product),
+              ),
+            );
+          } else {
+            // Se è un utente normale, mostra i dettagli come prima
+            _showProductDetails(product);
+          }
+        },
         borderRadius: BorderRadius.circular(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

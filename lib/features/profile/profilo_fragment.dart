@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../viewmodels/auth_viewmodel.dart';
-import '../login_screen.dart';
+import '../auth/viewmodels/auth_viewmodel.dart';
+import '../auth/screen/login_screen.dart';
 
 class ProfiloFragment extends StatelessWidget {
   const ProfiloFragment({super.key});

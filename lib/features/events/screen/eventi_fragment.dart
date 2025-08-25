@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import '../../models/evento.dart';
-import '../../viewmodels/auth_viewmodel.dart';
+import '../../../core/models/evento.dart';
+import '../../auth/viewmodels/auth_viewmodel.dart';
 
 class EventiFragment extends StatefulWidget {
   const EventiFragment({super.key});

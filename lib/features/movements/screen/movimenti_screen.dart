@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/auth_viewmodel.dart';
-import '../models/movimento.dart';
+import '../../auth/viewmodels/auth_viewmodel.dart';
+import '../../../core/models/movimento.dart';
 
 class MovimentiScreen extends StatelessWidget {
   const MovimentiScreen({super.key});
