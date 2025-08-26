@@ -65,6 +65,9 @@ class AuthViewModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> get orderHistory => _orderHistory;
 
+  List<Product> get prodottiOrdinabili =>
+      _prodotti.where((p) => p.ordinabile).toList();
+
   /// Effettua il login E carica tutti i dati
   Future<void> loginUser(String email, String password) async {
     _authResult = const AuthLoading();

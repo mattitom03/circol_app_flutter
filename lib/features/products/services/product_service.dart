@@ -5,20 +5,18 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class ProductService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String _collectionPath = 'products'; // Nome della tua collezione prodotti
+  final String _collectionPath = 'prodotti'; // Nome della tua collezione prodotti
 
   /// Recupera tutti i prodotti disponibili (versione semplificata)
   Future<List<Product>> getAllProducts() async {
     try {
       print('Caricamento prodotti da Firestore...');
-      // Rimuovo orderBy e where che richiedono indici composti
       final querySnapshot = await _firestore
-          .collection('products')
+          .collection(_collectionPath)
           .get(); // Query semplice senza filtri o ordinamenti
 
       final products = querySnapshot.docs
           .map((doc) => Product.fromMap(doc.data(), documentId: doc.id))
-          .where((product) => product.ordinabile) // Filtro in memoria
           .toList();
 
       // Ordino in memoria per nome
@@ -36,7 +34,7 @@ class ProductService {
   Future<List<Product>> getProductsByCategory(String categoria) async {
     try {
       final querySnapshot = await _firestore
-          .collection('products')
+          .collection(_collectionPath)
           .where('categoria', isEqualTo: categoria)
           .where('ordinabile', isEqualTo: true)
           .orderBy('nome')
@@ -54,7 +52,7 @@ class ProductService {
   /// Aggiunge un nuovo prodotto (solo admin)
   Future<bool> addProduct(Product product) async {
     try {
-      await _firestore.collection('products').add(product.toMap());
+      await _firestore.collection(_collectionPath).add(product.toMap());
       print('Prodotto aggiunto: ${product.nome}');
       return true;
     } catch (e) {
@@ -67,7 +65,7 @@ class ProductService {
   Future<bool> updateProduct(Product product) async {
     try {
       await _firestore
-          .collection('products')
+          .collection(_collectionPath)
           .doc(product.id)
           .update(product.toMap());
       print('Prodotto aggiornato: ${product.nome}');
@@ -81,7 +79,7 @@ class ProductService {
   /// Aggiorna la quantità di un prodotto
   Future<bool> updateQuantity(String productId, int newQuantity) async {
     try {
-      await _firestore.collection('products').doc(productId).update({
+      await _firestore.collection(_collectionPath).doc(productId).update({
         'numeroPezzi': newQuantity,
         'dataAggiornamento': DateTime.now().millisecondsSinceEpoch,
       });
@@ -96,7 +94,7 @@ class ProductService {
   /// Stream per prodotti in tempo reale
   Stream<List<Product>> getProductsStream() {
     return _firestore
-        .collection('products')
+        .collection(_collectionPath)
         .where('ordinabile', isEqualTo: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
@@ -110,7 +108,7 @@ class ProductService {
       // 1. Crea un riferimento al percorso in cui salvare il file
       // Es: product_images/ID_PRODOTTO.jpg
       final ref = FirebaseStorage.instance
-          .ref('product_images')
+          .ref('prodotti_imageUrl')
           .child('$productId.jpg');
 
       // 2. Carica il file

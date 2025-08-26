@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/product.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
-import 'package:provider/provider.dart';
 import 'edit_product_screen.dart';
 
 class ProductCatalogFragment extends StatefulWidget {
@@ -86,7 +85,10 @@ class _ProductCatalogFragmentState extends State<ProductCatalogFragment> {
       body: Consumer<AuthViewModel>(
         builder: (context, authViewModel, child) {
           // Usa i prodotti dal ViewModel invece di caricarli separatamente
-          final prodotti = authViewModel.prodotti;
+          final prodotti = authViewModel.isAdmin
+              ? authViewModel.prodotti
+              : authViewModel.prodottiOrdinabili;
+
           final isLoading = authViewModel.isLoading;
 
           return Column(

@@ -20,6 +20,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   late TextEditingController _descrizioneController;
   late TextEditingController _importoController;
   late TextEditingController _pezziController;
+  late bool _isOrdinabile;
 
   File? _selectedImageFile; // Per tenere in memoria il file della nuova immagine scelta
   String? _currentImageUrl; // Per l'URL dell'immagine esistente
@@ -34,6 +35,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _importoController = TextEditingController(text: widget.product.importo.toString());
     _pezziController = TextEditingController(text: widget.product.numeroPezzi.toString());
     _currentImageUrl = widget.product.immagine; // Salva l'URL corrente
+    _isOrdinabile = widget.product.ordinabile;
   }
   //METODO PER SCEGLIERE L'IMMAGINE
   Future<void> _pickImage() async {
@@ -88,6 +90,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         prezzo: double.tryParse(_importoController.text) ?? widget.product.importo,
         numeroPezzi: int.tryParse(_pezziController.text) ?? widget.product.numeroPezzi,
         immagine: finalImageUrl,
+        ordinabile: _isOrdinabile,
       );
       // 3. Salva il prodotto come prima
       await context.read<AuthViewModel>().updateProduct(updatedProduct);
@@ -166,6 +169,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 decoration: const InputDecoration(labelText: 'Numero Pezzi'),
                 keyboardType: TextInputType.number,
                 validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
+              ),
+              const SizedBox(height: 16),
+              SwitchListTile(
+                title: const Text('Prodotto Ordinabile'),
+                subtitle: const Text('Se attivo, gli utenti potranno vedere e ordinare questo prodotto.'),
+                value: _isOrdinabile,
+                onChanged: (bool value) {
+                  setState(() {
+                    _isOrdinabile = value;
+                  });
+                },
               ),
               const SizedBox(height: 32),
               if (_isUploading)
