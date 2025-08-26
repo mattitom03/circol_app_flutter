@@ -56,7 +56,7 @@ class AuthService {
         );
 
         await _firestore
-            .collection('users')
+            .collection('utenti')
             .doc(credential.user!.uid)
             .set(basicUser.toMap());
 
@@ -128,7 +128,7 @@ class AuthService {
 
       // Verifica se l'username è già in uso
       final usernameQuery = await _firestore
-          .collection('users')
+          .collection('utenti')
           .where('username', isEqualTo: username)
           .get();
 
@@ -157,7 +157,7 @@ class AuthService {
       );
 
       await _firestore
-          .collection('users')
+          .collection('utenti')
           .doc(credential.user!.uid)
           .set(newUser.toMap());
 
@@ -236,7 +236,7 @@ class AuthService {
   Future<bool> updateUserData(User user) async {
     try {
       await _firestore
-          .collection('users')
+          .collection('utenti')
           .doc(user.uid)
           .update(user.toMap());
       print('Dati utente aggiornati: ${user.email}');

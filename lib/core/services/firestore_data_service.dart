@@ -83,7 +83,7 @@ class FirestoreDataService {
   Future<User?> _loadUserDocument(String userId) async {
     try {
       final userDoc = await _firestore
-          .collection('users')
+          .collection('utenti')
           .doc(userId)
           .get();
 
@@ -106,7 +106,7 @@ class FirestoreDataService {
 
       // Query semplificata per evitare errori di indici
       final conversationsSnapshot = await _firestore
-          .collection('conversations')
+          .collection('chats')
           .where('participants', arrayContains: userId)
           .get(); // Rimuovo orderBy che richiede indice composto
 
@@ -115,8 +115,8 @@ class FirestoreDataService {
       // Ordino le conversazioni in memoria per lastMessageTime
       final conversations = conversationsSnapshot.docs.toList();
       conversations.sort((a, b) {
-        final aTime = a.data()['lastMessageTime'] as Timestamp?;
-        final bTime = b.data()['lastMessageTime'] as Timestamp?;
+        final aTime = a.data()['lastMessageTimestamp'] as Timestamp?;
+        final bTime = b.data()['lastMessageTimestamp'] as Timestamp?;
         if (aTime == null || bTime == null) return 0;
         return bTime.compareTo(aTime);
       });
@@ -124,10 +124,10 @@ class FirestoreDataService {
       // Per ogni conversazione, carica gli ultimi messaggi
       for (final convDoc in conversations) {
         final messagesSnapshot = await _firestore
-            .collection('conversations')
+            .collection('chats')
             .doc(convDoc.id)
             .collection('messages')
-            .orderBy('timestamp', descending: true)
+            .orderBy('lastMessageTimestamp', descending: true)
             .limit(50) // Limita a 50 messaggi per conversazione
             .get();
 
@@ -223,7 +223,7 @@ class FirestoreDataService {
   Future<List<User>> _loadAllUsers() async {
     try {
       final usersSnapshot = await _firestore
-          .collection('users')
+          .collection('utenti')
           .orderBy('nome')
           .get();
 
@@ -258,7 +258,7 @@ class FirestoreDataService {
   Future<List<Map<String, dynamic>>> _loadOrderHistory() async {
     try {
       final ordersSnapshot = await _firestore
-          .collection('orders')
+          .collection('ordinazioni')
           .orderBy('timestamp', descending: true)
           .limit(500)
           .get();
@@ -278,7 +278,7 @@ class FirestoreDataService {
   Future<bool> updateUserData(User user) async {
     try {
       await _firestore
-          .collection('users')
+          .collection('utenti')
           .doc(user.uid)
           .update(user.toMap());
 
