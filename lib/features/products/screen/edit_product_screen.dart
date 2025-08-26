@@ -89,7 +89,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         descrizione: _descrizioneController.text,
         prezzo: double.tryParse(_importoController.text) ?? widget.product.importo,
         numeroPezzi: int.tryParse(_pezziController.text) ?? widget.product.numeroPezzi,
-        immagine: finalImageUrl,
+        imageUrl: finalImageUrl,
         ordinabile: _isOrdinabile,
       );
       // 3. Salva il prodotto come prima

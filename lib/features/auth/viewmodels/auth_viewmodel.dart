@@ -4,6 +4,7 @@ import '../../../core/models/models.dart';
 import '../../../core/services/test_data_service.dart';
 import '../../products/services/product_service.dart';
 import 'dart:io';
+import '../../events/services/eventi_service.dart';
 
 
 /// ViewModel per gestire lo stato dell'autenticazione e tutti i dati dell'app
@@ -11,6 +12,7 @@ class AuthViewModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
   final TestDataService _testDataService = TestDataService();
   final ProductService _productService = ProductService();
+  final EventiService _eventiService = EventiService();
 
   AuthResult _authResult = const AuthIdle();
   User? _currentUser;
@@ -329,5 +331,19 @@ class AuthViewModel extends ChangeNotifier {
   Future<String> uploadProductImage(File imageFile, String productId) {
     // Delega semplicemente la chiamata al service
     return _productService.uploadProductImage(imageFile, productId);
+  }
+
+  Future<void> partecipaAllEvento(String eventId) async {
+    if (currentUser == null) {
+      throw Exception('Nessun utente loggato.');
+    }
+    try {
+      // Passa l'intero oggetto User al service
+      await _eventiService.partecipaEvento(eventId, currentUser!);
+      // Opzionale: puoi ricaricare i dati per un feedback immediato
+      await refreshAllData();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

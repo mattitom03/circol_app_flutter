@@ -22,7 +22,6 @@ class FirestoreDataService {
       final results = await Future.wait([
         _loadUserDocument(userId),
         _eventiService.getAllEventi(),
-        _eventiService.getEventiPerUtente(userId),
         _movimentiService.getMovimentiUtente(userId),
         _productService.getAllProducts(),
         _loadChatMessages(userId),
@@ -31,11 +30,10 @@ class FirestoreDataService {
 
       final userData = results[0] as User?;
       final tuttiEventi = results[1] as List<Evento>;
-      final eventiUtente = results[2] as List<Evento>;
-      final movimenti = results[3] as List<Movimento>;
-      final prodotti = results[4] as List<Product>;
-      final chatMessages = results[5] as List<Map<String, dynamic>>;
-      final notifiche = results[6] as List<Map<String, dynamic>>;
+      final movimenti = results[2] as List<Movimento>;
+      final prodotti = results[3] as List<Product>;
+      final chatMessages = results[4] as List<Map<String, dynamic>>;
+      final notifiche = results[5] as List<Map<String, dynamic>>;
 
       // Aggiorna il saldo dell'utente con i movimenti più recenti
       double saldoCalcolato = 0.0;
@@ -55,7 +53,7 @@ class FirestoreDataService {
       final allData = {
         'user': updatedUser,
         'tuttiEventi': tuttiEventi,
-        'eventiUtente': eventiUtente,
+        'eventiUtente': <Evento>[],
         'movimenti': movimenti,
         'prodotti': prodotti,
         'chatMessages': chatMessages,
@@ -65,7 +63,6 @@ class FirestoreDataService {
 
       print('Caricamento completo terminato:');
       print('- Eventi totali: ${tuttiEventi.length}');
-      print('- Eventi utente: ${eventiUtente.length}');
       print('- Movimenti: ${movimenti.length}');
       print('- Prodotti: ${prodotti.length}');
       print('- Messaggi chat: ${chatMessages.length}');

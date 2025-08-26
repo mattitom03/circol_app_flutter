@@ -8,7 +8,7 @@ class Product {
   final String categoria;
   final int numeroPezzi;
   final bool ordinabile;
-  final String? immagine;
+  final String? imageUrl;
   final DateTime dataCreazione;
   final DateTime? dataAggiornamento;
   final Map<String, dynamic>? metadata;
@@ -21,7 +21,7 @@ class Product {
     required this.categoria,
     required this.numeroPezzi,
     this.ordinabile = true,
-    this.immagine,
+    this.imageUrl,
     required this.dataCreazione,
     this.dataAggiornamento,
     this.metadata,
@@ -41,7 +41,7 @@ class Product {
   }
 
   /// Getter per compatibilità con i fragment esistenti
-  String? get imageUrl => immagine;
+  String? get immagine => imageUrl;
   double get importo => prezzo;
 
   /// Crea un Product da una Map (da Firestore)
@@ -54,7 +54,7 @@ class Product {
       categoria: map['categoria'] ?? '',
       numeroPezzi: map['numeroPezzi'] ?? 0,
       ordinabile: map['ordinabile'] ?? true,
-      immagine: map['immagine'],
+      imageUrl: map['imageUrl'],
       dataCreazione: _timestampToDateTime(map['dataCreazione']) ?? DateTime.now(),
       dataAggiornamento: map['dataAggiornamento'] != null
           ? _timestampToDateTime(map['dataAggiornamento'])
@@ -73,7 +73,7 @@ class Product {
       'categoria': categoria,
       'numeroPezzi': numeroPezzi,
       'ordinabile': ordinabile,
-      'immagine': immagine,
+      'imageUrl': imageUrl,
       'dataCreazione': Timestamp.fromDate(dataCreazione),
       'dataAggiornamento': dataAggiornamento != null
           ? Timestamp.fromDate(dataAggiornamento!)
@@ -104,7 +104,7 @@ class Product {
     String? categoria,
     int? numeroPezzi,
     bool? ordinabile,
-    String? immagine,
+    String? imageUrl,
     DateTime? dataCreazione,
     DateTime? dataAggiornamento,
     Map<String, dynamic>? metadata,
@@ -117,7 +117,7 @@ class Product {
       categoria: categoria ?? this.categoria,
       numeroPezzi: numeroPezzi ?? this.numeroPezzi,
       ordinabile: ordinabile ?? this.ordinabile,
-      immagine: immagine ?? this.immagine,
+      imageUrl: imageUrl ?? this.imageUrl,
       dataCreazione: dataCreazione ?? this.dataCreazione,
       dataAggiornamento: dataAggiornamento ?? this.dataAggiornamento,
       metadata: metadata ?? this.metadata,
