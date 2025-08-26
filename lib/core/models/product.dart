@@ -50,7 +50,7 @@ class Product {
       id: documentId ?? map['id'] ?? '',
       nome: map['nome'] ?? '',
       descrizione: map['descrizione'] ?? '',
-      prezzo: (map['prezzo'] ?? 0.0).toDouble(),
+      prezzo: (map['importo'] ?? 0.0).toDouble(),
       categoria: map['categoria'] ?? '',
       numeroPezzi: map['numeroPezzi'] ?? 0,
       ordinabile: map['ordinabile'] ?? true,
