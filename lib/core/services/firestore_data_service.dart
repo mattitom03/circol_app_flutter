@@ -36,29 +36,22 @@ class FirestoreDataService {
       final notifiche = results[5] as List<Map<String, dynamic>>;
 
       // Aggiorna il saldo dell'utente con i movimenti più recenti
-      double saldoCalcolato = 0.0;
-      for (final movimento in movimenti) {
-        saldoCalcolato += movimento.importo;
+
+      if (userData == null) {
+        return {};
       }
 
       // Aggiorna l'utente con i dati più recenti
-      User? updatedUser = userData;
-      if (userData != null) {
-        updatedUser = userData.copyWith(
-          movimenti: movimenti,
-          saldo: saldoCalcolato,
-        );
-      }
 
       final allData = {
-        'user': updatedUser,
+        'user': userData,
         'tuttiEventi': tuttiEventi,
         'eventiUtente': <Evento>[],
         'movimenti': movimenti,
         'prodotti': prodotti,
         'chatMessages': chatMessages,
         'notifiche': notifiche,
-        'saldoAggiornato': saldoCalcolato,
+        'saldoAggiornato': userData.saldo,
       };
 
       print('Caricamento completo terminato:');
@@ -67,7 +60,7 @@ class FirestoreDataService {
       print('- Prodotti: ${prodotti.length}');
       print('- Messaggi chat: ${chatMessages.length}');
       print('- Notifiche: ${notifiche.length}');
-      print('- Saldo calcolato: €${saldoCalcolato.toStringAsFixed(2)}');
+      print('- Saldo calcolato: €${userData.saldo.toStringAsFixed(2)}');
 
       return allData;
     } catch (e) {
