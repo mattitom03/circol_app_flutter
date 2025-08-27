@@ -8,6 +8,7 @@ import '../../screens/chat_fragment.dart';
 import '../../screens/qr_code_fragment.dart';
 import '../../screens/notifiche_fragment.dart';
 import '../../features/orders/screen/order_screen.dart';
+import '../../features/cash_register/screen/cassa_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final UserRole userRole;
@@ -38,8 +39,8 @@ class _MainScreenState extends State<MainScreen> {
       _pages = [
         const ProductCatalogFragment(),
         const EventiFragment(),
+        const CassaScreen(),
         const OrdersScreen(),
-        const NotificheFragment(),
         const ProfiloFragment(),
       ];
 
@@ -54,11 +55,11 @@ class _MainScreenState extends State<MainScreen> {
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.receipt_long),
-          label: 'Ordini',
+          label: 'Cassa',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.notifications),
-          label: 'Notifiche',
+          label: 'Ordini',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.person),
