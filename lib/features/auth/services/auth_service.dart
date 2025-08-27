@@ -246,4 +246,17 @@ class AuthService {
       return false;
     }
   }
+
+  /// Recupera il nome di un utente dal suo UID.
+  Future<String> getUserNameById(String uid) async {
+    try {
+      final doc = await _firestore.collection('utenti').doc(uid).get();
+      if (doc.exists) {
+        return doc.data()?['nome'] ?? 'Utente Sconosciuto';
+      }
+      return 'Utente Sconosciuto';
+    } catch (e) {
+      return 'Errore Utente';
+    }
+  }
 }

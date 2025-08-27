@@ -5,6 +5,8 @@ import '../../../core/services/test_data_service.dart';
 import '../../products/services/product_service.dart';
 import 'dart:io';
 import '../../events/services/eventi_service.dart';
+import '../../orders/services/orders_service.dart';
+
 
 
 /// ViewModel per gestire lo stato dell'autenticazione e tutti i dati dell'app
@@ -13,6 +15,7 @@ class AuthViewModel extends ChangeNotifier {
   final TestDataService _testDataService = TestDataService();
   final ProductService _productService = ProductService();
   final EventiService _eventiService = EventiService();
+  final OrdersService _ordersService = OrdersService();
 
   AuthResult _authResult = const AuthIdle();
   User? _currentUser;
@@ -343,6 +346,18 @@ class AuthViewModel extends ChangeNotifier {
       // Opzionale: puoi ricaricare i dati per un feedback immediato
       await refreshAllData();
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Chiama il service per eliminare un ordine.
+  Future<void> eliminaOrdine(String orderId) async {
+    try {
+      await _ordersService.eliminaOrdine(orderId);
+      // Ricarichiamo tutti i dati per far sparire l'ordine dalla lista nella UI
+      await refreshAllData();
+    } catch (e) {
+      print('Errore nel ViewModel durante l\'eliminazione dell\'ordine: $e');
       rethrow;
     }
   }
