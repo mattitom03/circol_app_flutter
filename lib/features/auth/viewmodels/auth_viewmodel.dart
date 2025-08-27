@@ -6,6 +6,8 @@ import '../../products/services/product_service.dart';
 import 'dart:io';
 import '../../events/services/eventi_service.dart';
 import '../../orders/services/orders_service.dart';
+import '../../movements/services/movimenti_service.dart';
+
 
 
 
@@ -16,6 +18,7 @@ class AuthViewModel extends ChangeNotifier {
   final ProductService _productService = ProductService();
   final EventiService _eventiService = EventiService();
   final OrdersService _ordersService = OrdersService();
+  final MovimentiService _movimentiService = MovimentiService();
 
   AuthResult _authResult = const AuthIdle();
   User? _currentUser;
@@ -359,6 +362,22 @@ class AuthViewModel extends ChangeNotifier {
     } catch (e) {
       print('Errore nel ViewModel durante l\'eliminazione dell\'ordine: $e');
       rethrow;
+    }
+  }
+
+  /// Gestisce l'intero processo di ricarica del saldo per un utente.
+  Future<void> eseguiRicarica(String userId, double importo) async {
+    try {
+      // Esegue entrambe le operazioni in parallelo per efficienza
+      await Future.wait([
+        _authService.ricaricaSaldoUtente(userId, importo),
+        _movimentiService.addMovimentoRicarica(userId, importo),
+      ]);
+      // Ricarica tutti i dati per aggiornare la UI
+      await refreshAllData();
+    } catch (e) {
+      print('Errore nel ViewModel durante la ricarica: $e');
+      rethrow; // Rilancia l'errore per mostrarlo nella UI
     }
   }
 }

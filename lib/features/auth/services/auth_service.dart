@@ -259,4 +259,22 @@ class AuthService {
       return 'Errore Utente';
     }
   }
+
+  /// Esegue una ricarica di saldo per un utente specifico.
+  Future<void> ricaricaSaldoUtente(String userId, double importo) async {
+    if (importo <= 0) {
+      throw Exception('L\'importo deve essere positivo.');
+    }
+    try {
+      final userRef = _firestore.collection('utenti').doc(userId);
+      await userRef.update({
+        // Usa FieldValue.increment per aggiungere l'importo al saldo esistente in modo sicuro
+        'saldo': FieldValue.increment(importo),
+      });
+    } catch (e) {
+      print('Errore durante l\'aggiornamento del saldo utente: $e');
+      rethrow;
+    }
+  }
+
 }

@@ -93,4 +93,20 @@ class MovimentiService {
             .map((doc) => Movimento.fromMap(doc.data()))
             .toList());
   }
+  /// Aggiunge un nuovo movimento di ricarica.
+  Future<void> addMovimentoRicarica(String userId, double importo) async {
+    try {
+      await _firestore.collection('movimenti').add({
+        'userId': userId,
+        'importo': importo,
+        'descrizione': 'Ricarica Saldo',
+        'tipo': 'ricarica',
+        'data': FieldValue.serverTimestamp(), // Data e ora attuali
+      });
+    } catch (e) {
+      print('Errore nell\'aggiunta del movimento di ricarica: $e');
+      rethrow;
+    }
+  }
+
 }
