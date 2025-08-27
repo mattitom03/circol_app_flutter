@@ -30,17 +30,15 @@ class MovimentiService {
   }
 
   /// Aggiunge un nuovo movimento
-  Future<bool> addMovimento(Movimento movimento, String userId) async {
+  Future<void> addMovimento(Movimento movimento) async {
     try {
-      final movimentoData = movimento.toMap();
-      movimentoData['userId'] = userId; // Aggiungi l'ID utente
-
-      await _firestore.collection('movimenti').add(movimentoData);
+      // Ora il metodo è più semplice, prende l'oggetto e lo salva.
+      await _firestore.collection('movimenti').add(movimento.toMap());
       print('Movimento aggiunto: ${movimento.descrizione}');
-      return true;
     } catch (e) {
       print('Errore nell\'aggiunta movimento: $e');
-      return false;
+      // Rimuoviamo 'return false' e rilanciamo l'errore per una gestione migliore
+      rethrow;
     }
   }
 

@@ -277,4 +277,17 @@ class AuthService {
     }
   }
 
+  Future<User?> getUserById(String uid) async {
+    try {
+      final doc = await _firestore.collection('utenti').doc(uid).get();
+      if (doc.exists) {
+        return User.fromMap(doc.data()!);
+      }
+      return null;
+    } catch (e) {
+      print('Errore nel recuperare utente by ID: $e');
+      return null;
+    }
+  }
+
 }

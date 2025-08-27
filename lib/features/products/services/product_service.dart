@@ -123,4 +123,32 @@ class ProductService {
       throw Exception("Errore nel caricamento dell'immagine.");
     }
   }
+
+  Future<Product?> getProductById(String productId) async {
+    try {
+      final doc = await _firestore.collection(_collectionPath).doc(productId).get();
+      if (doc.exists) {
+        return Product.fromMap(doc.data()!, documentId: doc.id);
+      }
+      return null;
+    } catch (e) {
+      print('Errore nel recuperare prodotto by ID: $e');
+      return null;
+    }
+  }
+
+  /// Aggiorna la quantità di più prodotti in un'unica operazione sicura (batch).
+  Future<void> updateMultipleProductsStock(Map<Product, int> itemsSold) async {
+    final batch = _firestore.batch();
+
+    itemsSold.forEach((product, quantitySold) {
+      final docRef = _firestore.collection(_collectionPath).doc(product.id);
+      final newStock = product.numeroPezzi - quantitySold;
+
+      // Assicurati che lo stock non vada in negativo
+      batch.update(docRef, {'numeroPezzi': (newStock < 0) ? 0 : newStock});
+    });
+
+    await batch.commit();
+  }
 }

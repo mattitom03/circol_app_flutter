@@ -31,6 +31,7 @@ class TestDataService {
         descrizione: 'Ricarica iniziale',
         data: DateTime.now().subtract(const Duration(days: 10)),
         tipo: 'ricarica',
+        userId: '',
       ),
       Movimento(
         id: '2',
@@ -38,6 +39,7 @@ class TestDataService {
         descrizione: 'Acquisto bar - Aperitivo',
         data: DateTime.now().subtract(const Duration(days: 8)),
         tipo: 'pagamento',
+        userId: '',
       ),
       Movimento(
         id: '3',
@@ -45,6 +47,7 @@ class TestDataService {
         descrizione: 'Quota evento - Torneo ping pong',
         data: DateTime.now().subtract(const Duration(days: 5)),
         tipo: 'pagamento',
+        userId: '',
       ),
       Movimento(
         id: '4',
@@ -52,6 +55,7 @@ class TestDataService {
         descrizione: 'Ricarica da app',
         data: DateTime.now().subtract(const Duration(days: 3)),
         tipo: 'ricarica',
+        userId: '',
       ),
       Movimento(
         id: '5',
@@ -59,6 +63,7 @@ class TestDataService {
         descrizione: 'Pranzo - Menu del giorno',
         data: DateTime.now().subtract(const Duration(days: 1)),
         tipo: 'pagamento',
+        userId: '',
       ),
     ];
 

@@ -1,5 +1,7 @@
 import 'user_role.dart';
 import 'movimento.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 /// Modello dati per rappresentare un utente dell'applicazione
 class User {
@@ -49,9 +51,7 @@ class User {
       photoUrl: map['photoUrl'],
       hasTessera: map['hasTessera'] ?? false,
       numeroTessera: map['numeroTessera'],
-      dataScadenzaTessera: map['dataScadenzaTessera'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['dataScadenzaTessera'])
-          : null,
+      dataScadenzaTessera: (map['dataScadenzaTessera'] as Timestamp?)?.toDate(),
       richiestaRinnovoInCorso: map['richiestaRinnovoInCorso'] ?? false,
     );
   }
