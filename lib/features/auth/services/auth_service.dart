@@ -290,4 +290,17 @@ class AuthService {
     }
   }
 
+  /// Aggiorna il saldo di un utente aggiungendo (o sottraendo) un importo.
+  Future<void> aggiornaSaldoUtente(String uid, double importoDaAggiungere) async {
+    try {
+      final userRef = _firestore.collection('utenti').doc(uid);
+      await userRef.update({'saldo': FieldValue.increment(importoDaAggiungere)});
+      print('Saldo aggiornato per l\'utente $uid di ${importoDaAggiungere.toStringAsFixed(2)}');
+    } catch (e) {
+      print('Errore durante l\'aggiornamento del saldo: $e');
+      rethrow;
+    }
+  }
+
+
 }

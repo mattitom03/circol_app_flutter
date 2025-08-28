@@ -7,9 +7,11 @@ import '../../products/services/product_service.dart';
 
 class RiscuotiViewModel extends ChangeNotifier {
   User? _selectedUser;
+
   User? get selectedUser => _selectedUser;
 
   final List<Product> _scannedProducts = [];
+
   List<Product> get scannedProducts => _scannedProducts;
 
   double get total {
@@ -39,6 +41,7 @@ class RiscuotiViewModel extends ChangeNotifier {
   }
 
   /// Finalizza la transazione
+  /// Finalizza la transazione
   Future<void> finalizeTransaction() async {
     if (_selectedUser == null || _scannedProducts.isEmpty) {
       throw Exception('Seleziona un utente e almeno un prodotto.');
@@ -62,12 +65,13 @@ class RiscuotiViewModel extends ChangeNotifier {
     final movimentiService = MovimentiService();
     final productService = ProductService();
 
-    await movimentiService.addMovimento(nuovoMovimento);
+    // 🔥 MODIFICA FONDAMENTALE QUI 🔥
+    // Ora passiamo entrambi i parametri richiesti dal service: l'ID dell'utente e il movimento.
+    await movimentiService.addMovimento(_selectedUser!.uid, nuovoMovimento);
     await productService.updateMultipleProductsStock(itemsSold);
 
     print('Transazione finalizzata con successo!');
 
-    // 🔥 2. CORRETTA LA CHIAMATA ALLA FUNZIONE 🔥
     clearCart(); // Pulisce il carrello
   }
 }

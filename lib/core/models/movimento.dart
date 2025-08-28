@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-/// Modello per rappresentare un movimento finanziario dell'utente
 class Movimento {
   final String id;
   final double importo;
@@ -17,35 +15,37 @@ class Movimento {
     required this.data,
     required this.tipo,
     required this.userId,
-
   });
 
-  /// Crea un Movimento da un Map
-  factory Movimento.fromMap(Map<String, dynamic> map) {
+  factory Movimento.fromMap(Map<String, dynamic> map, {String? documentId}) {
     return Movimento(
-      id: map['id'] ?? '',
+      id: documentId ?? map['id'] ?? '',
       importo: (map['importo'] ?? 0.0).toDouble(),
       descrizione: map['descrizione'] ?? '',
-      data: (map['data'] as Timestamp? ?? Timestamp.now()).toDate(),
+      data: _convertData(map['data']) ?? DateTime.now(),
       tipo: map['tipo'] ?? '',
       userId: map['userId'] ?? '',
     );
   }
 
-  /// Converte il Movimento in un Map
+  /// Converte il Movimento in una Map per il salvataggio su Firestore
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'importo': importo,
       'descrizione': descrizione,
-      'data': data.millisecondsSinceEpoch,
+      'data': Timestamp.fromDate(data), // Usiamo Timestamp per coerenza con Firestore
       'tipo': tipo,
       'userId': userId,
     };
   }
+}
 
-  @override
-  String toString() {
-    return 'Movimento(id: $id, importo: $importo, descrizione: $descrizione, tipo: $tipo)';
-  }
+/// FUNZIONE HELPER PER CONVERTIRE QUALSIASI TIPO DI DATA
+DateTime? _convertData(dynamic dateData) {
+  if (dateData == null) return null;
+  if (dateData is Timestamp) return dateData.toDate();
+  if (dateData is int) return DateTime.fromMillisecondsSinceEpoch(dateData);
+  if (dateData is double) return DateTime.fromMillisecondsSinceEpoch(dateData.toInt());
+  if (dateData is String) return DateTime.tryParse(dateData);
+  return null;
 }

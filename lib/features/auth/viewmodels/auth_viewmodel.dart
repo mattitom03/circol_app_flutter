@@ -369,16 +369,26 @@ class AuthViewModel extends ChangeNotifier {
   /// Gestisce l'intero processo di ricarica del saldo per un utente.
   Future<void> eseguiRicarica(String userId, double importo) async {
     try {
-      // Esegue entrambe le operazioni in parallelo per efficienza
-      await Future.wait([
-        _authService.ricaricaSaldoUtente(userId, importo),
-        _movimentiService.addMovimentoRicarica(userId, importo),
-      ]);
-      // Ricarica tutti i dati per aggiornare la UI
+      // 1. Crea l'oggetto Movimento che rappresenta questa ricarica
+      final ricaricaMovimento = Movimento(
+        id: '',
+        importo: importo,
+        descrizione: 'Ricarica manuale',
+        data: DateTime.now(),
+        tipo: 'ricarica',
+        userId: userId,
+      );
+
+      // 2. Esegui entrambe le operazioni
+      await _authService.aggiornaSaldoUtente(userId, importo);
+      // 🔥 CORREZIONE: Chiama addMovimento passando l'ID dell'utente e il movimento
+      await _movimentiService.addMovimento(userId, ricaricaMovimento);
+
+      // 3. Ricarica tutti i dati per aggiornare la UI
       await refreshAllData();
     } catch (e) {
       print('Errore nel ViewModel durante la ricarica: $e');
-      rethrow; // Rilancia l'errore per mostrarlo nella UI
+      rethrow;
     }
   }
 
@@ -389,19 +399,41 @@ class AuthViewModel extends ChangeNotifier {
   }) async {
     if (currentUser == null) throw Exception('Utente non loggato');
 
-    final orderData = {
-      'prodottoId': prodotto.id,
-      'nomeProdotto': prodotto.nome,
-      'uidUtente': currentUser!.uid,
-      'nomeUtente': currentUser!.nome, // Salviamo il nome per comodità
-      'richiesteAggiuntive': richiesteAggiuntive,
-      'stato': 'INVIATO',
-      'timestamp': FieldValue.serverTimestamp(),
-      'total': prodotto.prezzo,
-    };
+    try {
+      // 1. Prepara i dati per l'ordine
+      final orderData = {
+        'prodottoId': prodotto.id,
+        'nomeProdotto': prodotto.nome,
+        'uidUtente': currentUser!.uid,
+        'nomeUtente': currentUser!.nome,
+        'richiesteAggiuntive': richiesteAggiuntive,
+        'stato': 'INVIATO',
+        'timestamp': FieldValue.serverTimestamp(),
+        'total': prodotto.prezzo,
+      };
 
-    await _ordersService.creaOrdine(orderData);
-    // Ricarichiamo i dati per vedere subito il movimento o l'ordine
-    await refreshAllData();
+      // 2. Prepara i dati per il Movimento
+      final movimento = Movimento(
+        id: '',
+        importo: -prodotto.prezzo,
+        descrizione: 'Ordine: ${prodotto.nome}',
+        data: DateTime.now(),
+        tipo: 'pagamento',
+        userId: currentUser!.uid,
+      );
+
+      // 3. Esegui TUTTE le operazioni sul database
+      await _ordersService.creaOrdine(orderData);
+      // 🔥 CORREZIONE: Chiama addMovimento passando l'ID dell'utente e il movimento
+      await _movimentiService.addMovimento(currentUser!.uid, movimento);
+      await _authService.aggiornaSaldoUtente(currentUser!.uid, -prodotto.prezzo);
+
+      // 4. Ricarica tutti i dati per aggiornare la UI
+      await refreshAllData();
+
+    } catch (e) {
+      print('Errore durante la creazione del nuovo ordine: $e');
+      rethrow;
+    }
   }
 }

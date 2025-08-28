@@ -4,107 +4,44 @@ import '../../../core/models/movimento.dart';
 class MovimentiService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Recupera tutti i movimenti di un utente (versione semplificata)
+  /// Recupera gli ultimi movimenti dalla sottocollezione di un utente specifico.
   Future<List<Movimento>> getMovimentiUtente(String userId) async {
     try {
-      print('Caricamento movimenti per utente: $userId');
-      // Uso una query semplice senza orderBy per evitare indici
+      if (userId.isEmpty) return [];
+
+      print('Caricamento movimenti per utente: $userId dalla sua sottocollezione');
+
       final querySnapshot = await _firestore
-          .collection('movimenti')
-          .where('userId', isEqualTo: userId)
-          .get(); // Rimuovo orderBy
-
-      final movimenti = querySnapshot.docs
-          .map((doc) => Movimento.fromMap(doc.data()))
-          .toList();
-
-      // Ordino in memoria per data
-      movimenti.sort((a, b) => b.data.compareTo(a.data));
-
-      print('Caricati ${movimenti.length} movimenti');
-      return movimenti;
-    } catch (e) {
-      print('Errore nel caricamento movimenti: $e');
-      return [];
-    }
-  }
-
-  /// Aggiunge un nuovo movimento
-  Future<void> addMovimento(Movimento movimento) async {
-    try {
-      // Ora il metodo è più semplice, prende l'oggetto e lo salva.
-      await _firestore.collection('movimenti').add(movimento.toMap());
-      print('Movimento aggiunto: ${movimento.descrizione}');
-    } catch (e) {
-      print('Errore nell\'aggiunta movimento: $e');
-      // Rimuoviamo 'return false' e rilanciamo l'errore per una gestione migliore
-      rethrow;
-    }
-  }
-
-  /// Recupera gli ultimi movimenti di un utente
-  Future<List<Movimento>> getUltimiMovimenti(String userId, {int limit = 10}) async {
-    try {
-      final querySnapshot = await _firestore
-          .collection('movimenti')
-          .where('userId', isEqualTo: userId)
+          .collection('utenti') // 1. Vai alla collezione principale 'utenti'
+          .doc(userId)        // 2. Seleziona il documento dell'utente specifico
+          .collection('movimenti') // 3. Accedi alla sua sottocollezione 'movimenti'
           .orderBy('data', descending: true)
-          .limit(limit)
+          .limit(20)
           .get();
 
-      final movimenti = querySnapshot.docs
-          .map((doc) => Movimento.fromMap(doc.data()))
-          .toList();
+      print('Caricati ${querySnapshot.docs.length} movimenti per l\'utente.');
 
-      return movimenti;
+      return querySnapshot.docs
+          .map((doc) => Movimento.fromMap(doc.data(), documentId: doc.id))
+          .toList();
     } catch (e) {
-      print('Errore nel caricamento ultimi movimenti: $e');
+      print('Errore nel caricamento dei movimenti per l\'utente: $e');
       return [];
     }
   }
 
-  /// Calcola il saldo totale dai movimenti
-  Future<double> calcolaSaldo(String userId) async {
+  /// Aggiunge un nuovo movimento nella sottocollezione dell'utente.
+  Future<void> addMovimento(String userId, Movimento movimento) async {
     try {
-      final movimenti = await getMovimentiUtente(userId);
-      double saldo = 0.0;
-
-      for (final movimento in movimenti) {
-        saldo += movimento.importo;
-      }
-
-      return saldo;
+      await _firestore
+          .collection('utenti') // 1. Vai alla collezione 'utenti'
+          .doc(userId)        // 2. Seleziona il documento dell'utente
+          .collection('movimenti') // 3. Accedi alla sua sottocollezione
+          .add(movimento.toMap()); // 4. Aggiungi il nuovo movimento
+      print('Movimento aggiunto per l\'utente $userId');
     } catch (e) {
-      print('Errore nel calcolo saldo: $e');
-      return 0.0;
-    }
-  }
-
-  /// Stream per movimenti in tempo reale
-  Stream<List<Movimento>> getMovimentiStream(String userId) {
-    return _firestore
-        .collection('movimenti')
-        .where('userId', isEqualTo: userId)
-        .orderBy('data', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Movimento.fromMap(doc.data()))
-            .toList());
-  }
-  /// Aggiunge un nuovo movimento di ricarica.
-  Future<void> addMovimentoRicarica(String userId, double importo) async {
-    try {
-      await _firestore.collection('movimenti').add({
-        'userId': userId,
-        'importo': importo,
-        'descrizione': 'Ricarica Saldo',
-        'tipo': 'ricarica',
-        'data': FieldValue.serverTimestamp(), // Data e ora attuali
-      });
-    } catch (e) {
-      print('Errore nell\'aggiunta del movimento di ricarica: $e');
+      print('Errore nell\'aggiunta movimento: $e');
       rethrow;
     }
   }
-
 }
