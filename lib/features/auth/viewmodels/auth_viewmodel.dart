@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 import '../../../core/models/models.dart';
@@ -379,5 +380,28 @@ class AuthViewModel extends ChangeNotifier {
       print('Errore nel ViewModel durante la ricarica: $e');
       rethrow; // Rilancia l'errore per mostrarlo nella UI
     }
+  }
+
+  /// Crea un nuovo ordine chiamando il service
+  Future<void> creaNuovoOrdine({
+    required Product prodotto,
+    String? richiesteAggiuntive,
+  }) async {
+    if (currentUser == null) throw Exception('Utente non loggato');
+
+    final orderData = {
+      'prodottoId': prodotto.id,
+      'nomeProdotto': prodotto.nome,
+      'uidUtente': currentUser!.uid,
+      'nomeUtente': currentUser!.nome, // Salviamo il nome per comodità
+      'richiesteAggiuntive': richiesteAggiuntive,
+      'stato': 'INVIATO',
+      'timestamp': FieldValue.serverTimestamp(),
+      'total': prodotto.prezzo,
+    };
+
+    await _ordersService.creaOrdine(orderData);
+    // Ricarichiamo i dati per vedere subito il movimento o l'ordine
+    await refreshAllData();
   }
 }

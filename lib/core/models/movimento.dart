@@ -9,7 +9,6 @@ class Movimento {
   final DateTime data;
   final String tipo;
   final String userId;
-  // "ricarica", "pagamento", "riscossione", etc.
 
   const Movimento({
     required this.id,

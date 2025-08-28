@@ -1,3 +1,4 @@
+import 'package:circol_app_flutter/features/payment/screen/pagamento_screen.dart';
 import 'package:flutter/material.dart';
 import '../models/user_role.dart';
 import '../../features/home/home_fragment.dart';
@@ -9,6 +10,8 @@ import '../../screens/qr_code_fragment.dart';
 import '../../screens/notifiche_fragment.dart';
 import '../../features/orders/screen/order_screen.dart';
 import '../../features/cash_register/screen/cassa_screen.dart';
+import '../../features/payment/screen/pagamento_screen.dart';
+
 
 class MainScreen extends StatefulWidget {
   final UserRole userRole;
@@ -71,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
       _pages = [
         const HomeFragment(),
         const EventiFragment(),
-        const QrCodeFragment(),
+        const PagamentoScreen(),
         const ChatFragment(),
         const ProfiloFragment(),
       ];
@@ -86,8 +89,8 @@ class _MainScreenState extends State<MainScreen> {
           label: 'Eventi',
         ),
         const BottomNavigationBarItem(
-          icon: Icon(Icons.qr_code),
-          label: 'QR Code',
+          icon: Icon(Icons.euro_symbol),
+          label: 'Pagamento',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.chat),

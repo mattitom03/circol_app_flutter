@@ -14,4 +14,14 @@ class OrdersService {
       rethrow;
     }
   }
+
+  /// Crea un nuovo ordine nel database
+  Future<void> creaOrdine(Map<String, dynamic> orderData) async {
+    try {
+      await _firestore.collection(_collectionPath).add(orderData);
+    } catch (e) {
+      print('Errore durante la creazione dell\'ordine: $e');
+      rethrow;
+    }
+  }
 }

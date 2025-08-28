@@ -6,6 +6,7 @@ import 'features/auth/viewmodels/auth_viewmodel.dart';
 import 'features/auth/screen/login_screen.dart';
 import 'core/screen/main_screen.dart';
 import 'core/models/models.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ void main() async {
     print('L\'app continuerà a funzionare senza Firebase');
   }
 
+  await initializeDateFormatting('it_IT', null);
   runApp(const CircolApp());
 }
 
