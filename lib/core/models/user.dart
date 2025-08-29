@@ -18,6 +18,7 @@ class User {
   final String? numeroTessera;
   final DateTime? dataScadenzaTessera;
   final bool richiestaRinnovoInCorso;
+  final String? telefono;
 
   const User({
     this.uid = '',
@@ -33,6 +34,7 @@ class User {
     this.numeroTessera,
     this.dataScadenzaTessera,
     this.richiestaRinnovoInCorso = false,
+    this.telefono,
   });
 
   /// Crea un User da un Map (es. da Firebase/JSON)
@@ -53,6 +55,7 @@ class User {
       numeroTessera: map['numeroTessera'],
       dataScadenzaTessera: (map['dataScadenzaTessera'] as Timestamp?)?.toDate(),
       richiestaRinnovoInCorso: map['richiestaRinnovoInCorso'] ?? false,
+      telefono: map['telefono'],
     );
   }
 
@@ -72,6 +75,7 @@ class User {
       'numeroTessera': numeroTessera,
       'dataScadenzaTessera': dataScadenzaTessera?.millisecondsSinceEpoch,
       'richiestaRinnovoInCorso': richiestaRinnovoInCorso,
+      'telefono': telefono,
     };
   }
 

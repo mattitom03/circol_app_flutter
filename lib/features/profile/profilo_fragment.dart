@@ -1,278 +1,155 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart'; // Per formattare il saldo
 import '../auth/viewmodels/auth_viewmodel.dart';
-import '../auth/screen/login_screen.dart';
 
 class ProfiloFragment extends StatelessWidget {
   const ProfiloFragment({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 1. Accediamo al ViewModel per prendere i dati dell'utente loggato
+    final authViewModel = context.watch<AuthViewModel>();
+    final user = authViewModel.currentUser;
+    final currencyFormatter = NumberFormat.currency(locale: 'it_IT', symbol: '€');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profilo'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
       ),
-      body: Consumer<AuthViewModel>(
-        builder: (context, authViewModel, child) {
-          final user = authViewModel.currentUser;
-          if (user == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Avatar e info base
-                Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.deepPurple,
-                          backgroundImage: user.photoUrl != null
-                              ? NetworkImage(user.photoUrl!)
-                              : null,
-                          child: user.photoUrl == null
-                              ? Text(
-                                  user.nome.isNotEmpty ? user.nome[0].toUpperCase() : 'U',
-                                  style: const TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          user.nome,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '@${user.username}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: authViewModel.isAdmin
-                                ? Colors.orange.withOpacity(0.2)
-                                : Colors.blue.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            authViewModel.isAdmin ? 'ADMIN' : 'UTENTE',
-                            style: TextStyle(
-                              color: authViewModel.isAdmin ? Colors.orange : Colors.blue,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Informazioni account
-                _buildInfoCard(context, user),
-                const SizedBox(height: 20),
-
-                // Azioni
-                _buildActionsCard(context, authViewModel),
-              ],
+      body: user == null
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+        padding: const EdgeInsets.all(24.0),
+        children: [
+          // --- Sezione Intestazione Profilo ---
+          const Icon(Icons.account_circle, size: 80, color: Colors.deepPurple),
+          const SizedBox(height: 16),
+          Text(
+            user.displayName,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            user.email,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          Text(
+            'Telefono: ${user.telefono ?? 'Non disponibile'}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          if (authViewModel.isAdmin)
+            Chip(
+              label: const Text('ADMIN'),
+              backgroundColor: Colors.orange.shade100,
+              labelStyle: TextStyle(color: Colors.orange.shade800),
             ),
-          );
-        },
-      ),
-    );
-  }
+          const SizedBox(height: 32),
 
-  Widget _buildInfoCard(BuildContext context, user) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Informazioni Account',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow(Icons.email, 'Email', user.email),
-            _buildInfoRow(Icons.account_balance_wallet, 'Saldo', '€ ${user.saldo.toStringAsFixed(2)}'),
+          // --- Sezione Informazioni Account ---
+          _buildInfoCard(context, [
+            _buildInfoRow(Icons.email, 'Email:', user.email),
+            _buildInfoRow(Icons.account_balance_wallet, 'Saldo:', currencyFormatter.format(user.saldo)),
             _buildInfoRow(
-              user.hasTessera ? Icons.check_circle : Icons.cancel,
-              'Tessera',
+              Icons.credit_card,
+              'Tessera:',
               user.hasTessera ? 'Attiva' : 'Non attiva',
               valueColor: user.hasTessera ? Colors.green : Colors.red,
             ),
-            if (user.numeroTessera != null)
-              _buildInfoRow(Icons.credit_card, 'Numero Tessera', user.numeroTessera!),
-          ],
-        ),
-      ),
-    );
-  }
+          ]),
+          const SizedBox(height: 24),
 
-  Widget _buildInfoRow(IconData icon, String label, String value, {Color? valueColor}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
-          const SizedBox(width: 12),
-          Text(
-            '$label:',
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                color: valueColor ?? Colors.grey[700],
-                fontWeight: valueColor != null ? FontWeight.bold : FontWeight.normal,
-              ),
-              textAlign: TextAlign.end,
+          // --- Sezione Azioni ---
+          _buildActionsCard(context, [
+            ListTile(
+              leading: const Icon(Icons.badge_outlined),
+              title: const Text('Richiedi Tessera'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                // Logica da implementare in futuro
+                print('Pulsante "Richiedi Tessera" premuto.');
+              },
             ),
+            ListTile(
+              leading: const Icon(Icons.feedback_outlined),
+              title: const Text('Invia Feedback'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                // Logica da implementare in futuro
+                print('Pulsante "Invia Feedback" premuto.');
+              },
+            ),
+          ]),
+          const SizedBox(height: 24),
+
+          // --- Pulsante di Logout ---
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade400,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              // Logica di Logout (funzionante)
+              context.read<AuthViewModel>().logout();
+            },
+            child: const Text('Logout'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildActionsCard(BuildContext context, AuthViewModel authViewModel) {
+  // Widget helper per creare le card
+  Widget _buildInfoCard(BuildContext context, List<Widget> children) {
     return Card(
-      elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Azioni',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildActionTile(
-              icon: Icons.edit,
-              title: 'Modifica Profilo',
-              onTap: () {
-                // TODO: Navigare a modifica profilo
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Funzionalità in sviluppo')),
-                );
-              },
-            ),
-            _buildActionTile(
-              icon: Icons.credit_card,
-              title: 'Gestisci Tessera',
-              onTap: () {
-                // TODO: Navigare a gestione tessera
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Funzionalità in sviluppo')),
-                );
-              },
-            ),
-            _buildActionTile(
-              icon: Icons.history,
-              title: 'Storico Movimenti',
-              onTap: () {
-                // TODO: Navigare a storico movimenti
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Funzionalità in sviluppo')),
-                );
-              },
-            ),
-            _buildActionTile(
-              icon: Icons.settings,
-              title: 'Impostazioni',
-              onTap: () {
-                // TODO: Navigare a impostazioni
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Funzionalità in sviluppo')),
-                );
-              },
-            ),
-            const Divider(),
-            _buildActionTile(
-              icon: Icons.logout,
-              title: 'Logout',
-              onTap: () => _handleLogout(context, authViewModel),
-              textColor: Colors.red,
-            ),
+            Text('Informazioni Account', style: Theme.of(context).textTheme.titleLarge),
+            const Divider(height: 24),
+            ...children,
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionTile({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    Color? textColor,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: textColor),
-      title: Text(
-        title,
-        style: TextStyle(color: textColor),
+  Widget _buildActionsCard(BuildContext context, List<Widget> children) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text('Azioni', style: Theme.of(context).textTheme.titleLarge),
+          ),
+          ...children,
+        ],
       ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: onTap,
     );
   }
 
-  void _handleLogout(BuildContext context, AuthViewModel authViewModel) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Sei sicuro di voler uscire?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annulla'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await authViewModel.logout();
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
+  // Widget helper per creare le righe di informazioni
+  Widget _buildInfoRow(IconData icon, String label, String value, {Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.grey.shade600, size: 20),
+          const SizedBox(width: 16),
+          Text(label, style: const TextStyle(fontSize: 16)),
+          const Spacer(),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: valueColor,
             ),
-            child: const Text('Logout'),
           ),
         ],
       ),
