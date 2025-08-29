@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../auth/viewmodels/auth_viewmodel.dart';
 import '../../../core/models/user.dart';
-
+import '../admin_panel/screen/gestione_tessere_screen.dart';
 class ProfiloFragment extends StatelessWidget {
   const ProfiloFragment({super.key});
 
@@ -163,8 +163,9 @@ Widget _buildAdminActionsCard(BuildContext context) {
           title: const Text('Gestisci Tessere Utenti'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            // Logica da implementare in futuro
-            print('Pulsante "Gestisci Tessere" premuto.');
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const GestioneTessereScreen()),
+            );
           },
         ),
         ListTile(

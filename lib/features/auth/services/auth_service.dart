@@ -313,4 +313,34 @@ class AuthService {
     }
   }
 
+  /// Assegna una nuova tessera a un utente o ne approva la richiesta.
+  Future<void> assegnaTessera(String uid) async {
+    try {
+      final scadenza = DateTime.now().add(const Duration(days: 365));
+      final numeroTessera = 'TS${DateTime.now().millisecondsSinceEpoch}';
+
+      await _firestore.collection('utenti').doc(uid).update({
+        'hasTessera': true,
+        'richiestaRinnovoInCorso': false,
+        'numeroTessera': numeroTessera,
+        'dataScadenzaTessera': Timestamp.fromDate(scadenza),
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Revoca la tessera di un utente.
+  Future<void> revocaTessera(String uid) async {
+    try {
+      await _firestore.collection('utenti').doc(uid).update({
+        'hasTessera': false,
+        'numeroTessera': null,
+        'dataScadenzaTessera': null,
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 }

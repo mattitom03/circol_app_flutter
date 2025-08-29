@@ -180,7 +180,7 @@ class FirestoreDataService {
 
       final results = await Future.wait([
         loadAllUserData(adminUserId), // Dati dell'admin stesso
-        _loadAllUsers(), // Tutti gli utenti
+        loadAllUsers(), // Tutti gli utenti
         _loadAllMovimenti(), // Tutti i movimenti del sistema
         _loadOrderHistory(), // Storico ordini
       ]);
@@ -209,17 +209,30 @@ class FirestoreDataService {
     }
   }
 
-  /// Carica tutti gli utenti (solo per admin)
-  Future<List<User>> _loadAllUsers() async {
-    try {
-      final usersSnapshot = await _firestore
-          .collection('utenti')
-          .orderBy('nome')
-          .get();
 
-      return usersSnapshot.docs
-          .map((doc) => User.fromMap(doc.data()))
-          .toList();
+  /// Carica tutti gli utenti (solo per admin + ricerca errore)
+  Future<List<User>> loadAllUsers() async {
+    try {
+      final usersSnapshot = await _firestore.collection('utenti').get();
+
+      final List<User> users = [];
+      for (var doc in usersSnapshot.docs) {
+        try {
+          // Prova a convertire ogni documento in un oggetto User
+          users.add(User.fromMap(doc.data()));
+        } catch (e) {
+          // Se la conversione fallisce, stampa un errore e va avanti
+          print('--- ERRORE DI CONVERSIONE ---');
+          print('Impossibile caricare l-utente con ID: ${doc.id}');
+          print('Causa dell-errore: $e');
+          print('-----------------------------');
+        }
+      }
+
+      // Ordina la lista finale in memoria
+      users.sort((a, b) => a.nome.compareTo(b.nome));
+
+      return users;
     } catch (e) {
       print('Errore nel caricamento di tutti gli utenti: $e');
       return [];

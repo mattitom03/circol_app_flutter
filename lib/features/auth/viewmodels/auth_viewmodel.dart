@@ -383,7 +383,6 @@ class AuthViewModel extends ChangeNotifier {
 
       // 2. Esegui entrambe le operazioni
       await _authService.aggiornaSaldoUtente(userId, importo);
-      // 🔥 CORREZIONE: Chiama addMovimento passando l'ID dell'utente e il movimento
       await _movimentiService.addMovimento(userId, ricaricaMovimento);
 
       // 3. Ricarica tutti i dati per aggiornare la UI
