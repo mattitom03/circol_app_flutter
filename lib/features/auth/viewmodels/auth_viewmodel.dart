@@ -436,4 +436,17 @@ class AuthViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
+  /// Annulla la partecipazione di un utente a un evento.
+  Future<void> annullaPartecipazioneEvento(String eventId) async {
+    if (currentUser == null) {
+      throw Exception('Nessun utente loggato.');
+    }
+    try {
+      await _eventiService.annullaPartecipazione(eventId, currentUser!.uid);
+      await refreshAllData(); // Ricarica i dati per aggiornare la UI
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

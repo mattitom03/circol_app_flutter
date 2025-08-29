@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/models/evento.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
 import 'admin_event_details_screen.dart'; // Importa la schermata admin che hai già creato
+import 'user_event_details_screen.dart';
 
 class EventiFragment extends StatelessWidget {
   const EventiFragment({super.key});
@@ -65,44 +66,16 @@ Widget _buildEventoCard(BuildContext context, Evento evento, AuthViewModel authV
             ),
           );
         } else {
-          // UTENTE NORMALE: Mostra il popup per iscriversi
-          _showPartecipaDialog(context, evento, authViewModel);
+          // UTENTE: ora va alla schermata di dettaglio
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => UserEventDetailsScreen(evento: evento),
+            ),
+          );
         }
       },
     ),
   );
 }
 
-void _showPartecipaDialog(BuildContext context, Evento evento, AuthViewModel authViewModel) {
-  showDialog(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: Text(evento.nome), // Usa 'nome' o il campo corretto
-        content: const Text('Vuoi iscriverti a questo evento?'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Chiudi'),
-            onPressed: () => Navigator.of(dialogContext).pop(),
-          ),
-          ElevatedButton(
-            child: const Text('Partecipa'),
-            onPressed: () {
-              authViewModel.partecipaAllEvento(evento.id)
-                  .then((_) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Iscrizione avvenuta!'), backgroundColor: Colors.green),
-                );
-              }).catchError((e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Errore: ${e.toString()}'), backgroundColor: Colors.red),
-                );
-              });
-              Navigator.of(dialogContext).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+

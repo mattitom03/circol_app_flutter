@@ -53,4 +53,37 @@ class EventiService {
       return [];
     }
   }
+
+  /// Controlla se un utente sta già partecipando a un evento.
+  /// Ritorna 'true' se il documento del partecipante esiste, altrimenti 'false'.
+  Future<bool> checkPartecipazione(String eventId, String userId) async {
+    try {
+      final doc = await _firestore
+          .collection(_collectionPath)
+          .doc(eventId)
+          .collection('partecipanti')
+          .doc(userId)
+          .get();
+      return doc.exists; // Se il documento esiste, l'utente partecipa
+    } catch (e) {
+      print('Errore nel controllo partecipazione: $e');
+      return false;
+    }
+  }
+
+  /// Annulla la partecipazione di un utente da un evento.
+  Future<void> annullaPartecipazione(String eventId, String userId) async {
+    try {
+      await _firestore
+          .collection(_collectionPath)
+          .doc(eventId)
+          .collection('partecipanti')
+          .doc(userId)
+          .delete(); // Elimina il documento del partecipante
+      print('Partecipazione annullata per l-utente $userId all-evento $eventId');
+    } catch (e) {
+      print('Errore nell\'annullamento partecipazione: $e');
+      rethrow;
+    }
+  }
 }
