@@ -302,5 +302,15 @@ class AuthService {
     }
   }
 
+  Future<void> impostaRichiestaTessera(String uid, bool inCorso) async {
+    try {
+      await _firestore.collection('utenti').doc(uid).update({
+        'richiestaRinnovoInCorso': inCorso,
+      });
+    } catch (e) {
+      print('Errore durante l\'impostazione della richiesta tessera: $e');
+      rethrow;
+    }
+  }
 
 }

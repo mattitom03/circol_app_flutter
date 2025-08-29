@@ -52,11 +52,29 @@ class ProfiloFragment extends StatelessWidget {
           _buildInfoCard(context, [
             _buildInfoRow(Icons.email, 'Email:', user.email),
             _buildInfoRow(Icons.account_balance_wallet, 'Saldo:', currencyFormatter.format(user.saldo)),
-            _buildInfoRow(
-              Icons.credit_card,
-              'Tessera:',
-              user.hasTessera ? 'Attiva' : 'Non attiva',
-              valueColor: user.hasTessera ? Colors.green : Colors.red,
+            Builder(
+              builder: (context) {
+                final String statoTessera;
+                final Color coloreStatoTessera;
+
+                if (user.hasTessera) {
+                  statoTessera = 'Attiva';
+                  coloreStatoTessera = Colors.green;
+                } else if (user.richiestaRinnovoInCorso) {
+                  statoTessera = 'Richiesta in attesa';
+                  coloreStatoTessera = Colors.orange;
+                } else {
+                  statoTessera = 'Non attiva';
+                  coloreStatoTessera = Colors.red;
+                }
+
+                return _buildInfoRow(
+                  Icons.credit_card,
+                  'Tessera:',
+                  statoTessera,
+                  valueColor: coloreStatoTessera,
+                );
+              },
             ),
           ]),
           const SizedBox(height: 24),
@@ -68,8 +86,26 @@ class ProfiloFragment extends StatelessWidget {
               title: const Text('Richiedi Tessera'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
-                // Logica da implementare in futuro
-                print('Pulsante "Richiedi Tessera" premuto.');
+                // Controlla lo stato dell'utente prima di decidere cosa fare
+                if (user.richiestaRinnovoInCorso) {
+                  // Se c'è già una richiesta, mostra un messaggio
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Hai già una richiesta in attesa.'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                } else if (user.hasTessera) {
+                  // Se ha già la tessera, mostra un altro messaggio
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Hai già una tessera attiva.'),
+                    ),
+                  );
+                } else {
+                  // Altrimenti, apri il dialogo per la richiesta
+                  _showRichiediTesseraDialog(context);
+                }
               },
             ),
             ListTile(
@@ -155,4 +191,76 @@ class ProfiloFragment extends StatelessWidget {
       ),
     );
   }
+
+}
+
+void _showRichiediTesseraDialog(BuildContext context) {
+  final authViewModel = context.read<AuthViewModel>();
+  final user = authViewModel.currentUser;
+  const double costoTessera = 3.0;
+
+  if (user == null) return; // Sicurezza
+
+  final saldoAttuale = user.saldo;
+  final saldoDopo = saldoAttuale - costoTessera;
+
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: const Text('Richiedi Tessera Socio'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Vuoi richiedere una nuova tessera?'),
+            const SizedBox(height: 16),
+            Text('Costo: ${costoTessera.toStringAsFixed(2)} €'),
+            const Divider(height: 16),
+            Text('Saldo attuale: ${saldoAttuale.toStringAsFixed(2)} €'),
+            Text(
+              'Saldo dopo il pagamento: ${saldoDopo.toStringAsFixed(2)} €',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: saldoDopo < 0 ? Colors.red : Colors.black,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Annulla'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Controlla di nuovo il saldo prima di procedere
+              if (saldoAttuale < costoTessera) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Saldo insufficiente!'), backgroundColor: Colors.red),
+                );
+                Navigator.of(dialogContext).pop();
+                return;
+              }
+
+              // Chiama la funzione del ViewModel per eseguire l'operazione
+              authViewModel.richiediTessera()
+                  .then((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Richiesta inviata con successo!'), backgroundColor: Colors.green),
+                );
+              }).catchError((e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Errore: ${e.toString()}'), backgroundColor: Colors.red),
+                );
+              });
+
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text('Conferma Pagamento'),
+          ),
+        ],
+      );
+    },
+  );
 }

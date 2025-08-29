@@ -449,4 +449,42 @@ class AuthViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
+  /// Gestisce l'intero processo di richiesta di una nuova tessera.
+  Future<void> richiediTessera() async {
+    if (currentUser == null) {
+      throw Exception('Nessun utente loggato.');
+    }
+
+    const double costoTessera = 3.0;
+
+    // 1. Controlla se il saldo è sufficiente
+    if (currentUser!.saldo < costoTessera) {
+      throw Exception('Saldo insufficiente per richiedere la tessera.');
+    }
+
+    try {
+      // 2. Prepara il movimento per registrare la transazione
+      final movimentoTessera = Movimento(
+        id: '',
+        importo: -costoTessera,
+        descrizione: 'Richiesta tessera socio',
+        data: DateTime.now(),
+        tipo: 'pagamento',
+        userId: currentUser!.uid,
+      );
+
+      // 3. Esegui tutte le operazioni sul database
+      await _authService.aggiornaSaldoUtente(currentUser!.uid, -costoTessera);
+      await _movimentiService.addMovimento(currentUser!.uid, movimentoTessera);
+      await _authService.impostaRichiestaTessera(currentUser!.uid, true);
+
+      // 4. Aggiorna i dati nell'app
+      await refreshAllData();
+
+    } catch (e) {
+      print('Errore durante la richiesta della tessera: $e');
+      rethrow; // Rilancia l'errore per mostrarlo nella UI
+    }
+  }
 }
