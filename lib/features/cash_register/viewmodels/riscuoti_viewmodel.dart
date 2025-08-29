@@ -32,7 +32,6 @@ class RiscuotiViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 👇👇 1. AGGIUNTO IL METODO MANCANTE 👇👇
   /// Pulisce lo stato del carrello per una nuova transazione.
   void clearCart() {
     _selectedUser = null;
@@ -40,7 +39,6 @@ class RiscuotiViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Finalizza la transazione
   /// Finalizza la transazione
   Future<void> finalizeTransaction() async {
     if (_selectedUser == null || _scannedProducts.isEmpty) {
@@ -65,7 +63,6 @@ class RiscuotiViewModel extends ChangeNotifier {
     final movimentiService = MovimentiService();
     final productService = ProductService();
 
-    // 🔥 MODIFICA FONDAMENTALE QUI 🔥
     // Ora passiamo entrambi i parametri richiesti dal service: l'ID dell'utente e il movimento.
     await movimentiService.addMovimento(_selectedUser!.uid, nuovoMovimento);
     await productService.updateMultipleProductsStock(itemsSold);

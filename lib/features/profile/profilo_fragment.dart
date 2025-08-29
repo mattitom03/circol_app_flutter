@@ -113,8 +113,8 @@ class ProfiloFragment extends StatelessWidget {
               title: const Text('Invia Feedback'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
-                // Logica da implementare in futuro
-                print('Pulsante "Invia Feedback" premuto.');
+                // Chiama la nuova funzione che crea il dialogo
+                _showFeedbackDialog(context);
               },
             ),
           ]),
@@ -260,6 +260,110 @@ void _showRichiediTesseraDialog(BuildContext context) {
             child: const Text('Conferma Pagamento'),
           ),
         ],
+      );
+    },
+  );
+}
+
+//mostra feedback
+void _showFeedbackDialog(BuildContext context) {
+  final authViewModel = context.read<AuthViewModel>();
+  final _formKey = GlobalKey<FormState>();
+  final _titoloController = TextEditingController();
+  final _messaggioController = TextEditingController();
+  String _selectedCategory = 'GENERALE'; // Valore iniziale
+
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      // Usiamo StatefulBuilder per gestire lo stato del dropdown
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Invia il tuo feedback'),
+            content: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Dropdown per la categoria
+                    DropdownButtonFormField<String>(
+                      value: _selectedCategory,
+                      items: ['GENERALE', 'TECNICO', 'SUGGERIMENTO']
+                          .map((label) => DropdownMenuItem(
+                        child: Text(label),
+                        value: label,
+                      ))
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedCategory = value;
+                          });
+                        }
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Categoria',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Campo per il titolo
+                    TextFormField(
+                      controller: _titoloController,
+                      decoration: const InputDecoration(
+                        labelText: 'Titolo',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Il titolo non può essere vuoto' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    // Campo per il messaggio
+                    TextFormField(
+                      controller: _messaggioController,
+                      decoration: const InputDecoration(
+                        labelText: 'Messaggio',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 4,
+                      validator: (value) => value!.isEmpty ? 'Il messaggio non può essere vuoto' : null,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('Il tuo feedback ci aiuta a migliorare l\'app. Grazie!', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Annulla'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    authViewModel.inviaFeedback(
+                      categoria: _selectedCategory,
+                      titolo: _titoloController.text,
+                      messaggio: _messaggioController.text,
+                    ).then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Feedback inviato con successo!'), backgroundColor: Colors.green),
+                      );
+                      Navigator.of(dialogContext).pop();
+                    }).catchError((e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Errore: ${e.toString()}'), backgroundColor: Colors.red),
+                      );
+                    });
+                  }
+                },
+                child: const Text('Invia'),
+              ),
+            ],
+          );
+        },
       );
     },
   );

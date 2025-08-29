@@ -8,6 +8,7 @@ import 'dart:io';
 import '../../events/services/eventi_service.dart';
 import '../../orders/services/orders_service.dart';
 import '../../movements/services/movimenti_service.dart';
+import '../../feedback/services/feedback_service.dart';
 
 
 
@@ -20,6 +21,7 @@ class AuthViewModel extends ChangeNotifier {
   final EventiService _eventiService = EventiService();
   final OrdersService _ordersService = OrdersService();
   final MovimentiService _movimentiService = MovimentiService();
+  final FeedbackService _feedbackService = FeedbackService();
 
   AuthResult _authResult = const AuthIdle();
   User? _currentUser;
@@ -485,6 +487,35 @@ class AuthViewModel extends ChangeNotifier {
     } catch (e) {
       print('Errore durante la richiesta della tessera: $e');
       rethrow; // Rilancia l'errore per mostrarlo nella UI
+    }
+  }
+  /// Gestisce l'invio di un nuovo feedback da parte dell'utente.
+  Future<void> inviaFeedback({
+    required String categoria,
+    required String titolo,
+    required String messaggio,
+  }) async {
+    if (currentUser == null) {
+      throw Exception('Nessun utente loggato per inviare il feedback.');
+    }
+
+    // Prepara la mappa dei dati come nel tuo database
+    final feedbackData = {
+      'categoria': categoria,
+      'titolo': titolo,
+      'messaggio': messaggio,
+      'letto': false,
+      'timestamp': FieldValue.serverTimestamp(),
+      'uidUtente': currentUser!.uid,
+      'nomeUtente': currentUser!.displayName,
+      'emailUtente': currentUser!.email,
+    };
+
+    try {
+      await _feedbackService.inviaFeedback(feedbackData);
+    } catch (e) {
+      // L'errore viene rilanciato per essere mostrato nella UI
+      rethrow;
     }
   }
 }
