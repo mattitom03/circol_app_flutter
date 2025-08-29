@@ -252,7 +252,7 @@ class AuthService {
     try {
       final doc = await _firestore.collection('utenti').doc(uid).get();
       if (doc.exists) {
-        return doc.data()?['nome'] ?? 'Utente Sconosciuto';
+        return doc.data()?['displayName'] ?? 'Utente Sconosciuto';
       }
       return 'Utente Sconosciuto';
     } catch (e) {

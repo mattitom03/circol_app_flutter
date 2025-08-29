@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import '../auth/viewmodels/auth_viewmodel.dart';
 import '../../../core/models/user.dart';
 import '../admin_panel/screen/gestione_tessere_screen.dart';
+import '../feedback/screen/feedback_screen.dart';
+
 class ProfiloFragment extends StatelessWidget {
   const ProfiloFragment({super.key});
 
@@ -173,8 +175,10 @@ Widget _buildAdminActionsCard(BuildContext context) {
           title: const Text('Visualizza Feedback Ricevuti'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            // Logica da implementare in futuro
-            print('Pulsante "Visualizza Feedback" premuto.');
+            // Naviga alla nuova schermata
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const FeedbackScreen()),
+            );
           },
         ),
       ],

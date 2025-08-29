@@ -29,7 +29,7 @@ class EventiService {
           .collection('partecipanti')
           .doc(user.uid)
           .set({
-        'nome': user.nome,
+        'nome': user.displayName,
         'email': user.email,
         'dataIscrizione': FieldValue.serverTimestamp(),
       });
