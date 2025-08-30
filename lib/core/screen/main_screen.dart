@@ -1,3 +1,4 @@
+import 'package:circol_app_flutter/features/chat/screen/chat_list_screen.dart';
 import 'package:circol_app_flutter/features/payment/screen/pagamento_screen.dart';
 import 'package:flutter/material.dart';
 import '../models/user_role.dart';
@@ -11,6 +12,7 @@ import '../../screens/notifiche_fragment.dart';
 import '../../features/orders/screen/order_screen.dart';
 import '../../features/cash_register/screen/cassa_screen.dart';
 import '../../features/payment/screen/pagamento_screen.dart';
+import '../../features/chat/screen/chat_list_screen.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -75,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
         const HomeFragment(),
         const EventiFragment(),
         const PagamentoScreen(),
-        const ChatFragment(),
+        const ChatListScreen(),
         const ProfiloFragment(),
       ];
 
