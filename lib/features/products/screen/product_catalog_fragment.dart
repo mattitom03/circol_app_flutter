@@ -1,9 +1,11 @@
+import 'package:circol_app_flutter/features/products/screen/add_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/product.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
 import 'edit_product_screen.dart';
+import 'add_product_screen.dart';
 
 class ProductCatalogFragment extends StatefulWidget {
   const ProductCatalogFragment({super.key});
@@ -71,7 +73,8 @@ class _ProductCatalogFragmentState extends State<ProductCatalogFragment> {
                 return IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () {
-                    _showAddProductDialog();
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddProductScreen()),
+                    );
                   },
                 );
               } else {

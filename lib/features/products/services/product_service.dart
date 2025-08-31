@@ -49,11 +49,13 @@ class ProductService {
     }
   }
 
-  /// Aggiunge un nuovo prodotto (solo admin)
+  /// Aggiunge un nuovo prodotto usando il suo ID personalizzato.
   Future<bool> addProduct(Product product) async {
     try {
-      await _firestore.collection(_collectionPath).add(product.toMap());
-      print('Prodotto aggiunto: ${product.nome}');
+      // Usiamo .doc(product.id).set(...)
+      // Questo crea un documento con l'ID esatto che specifichi tu.
+      await _firestore.collection(_collectionPath).doc(product.id).set(product.toMap());
+      print('Prodotto aggiunto con ID: ${product.id}');
       return true;
     } catch (e) {
       print('Errore nell\'aggiunta prodotto: $e');
@@ -64,6 +66,7 @@ class ProductService {
   /// Aggiorna un prodotto esistente
   Future<bool> updateProduct(Product product) async {
     try {
+      // L'ID del prodotto è già il nome
       await _firestore
           .collection(_collectionPath)
           .doc(product.id)
@@ -150,5 +153,16 @@ class ProductService {
     });
 
     await batch.commit();
+  }
+
+  /// Elimina un prodotto dal database.
+  Future<void> deleteProduct(String productId) async {
+    try {
+      await _firestore.collection(_collectionPath).doc(productId).delete();
+      print('Prodotto $productId eliminato con successo.');
+    } catch (e) {
+      print('Errore durante l\'eliminazione del prodotto: $e');
+      rethrow;
+    }
   }
 }

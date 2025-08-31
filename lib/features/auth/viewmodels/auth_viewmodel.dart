@@ -517,4 +517,16 @@ class AuthViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
+  /// Chiama il service per eliminare un prodotto.
+  Future<void> deleteProduct(String productId) async {
+    try {
+      await _productService.deleteProduct(productId);
+      // Ricarica tutti i dati per far sparire il prodotto dalla lista
+      await refreshAllData();
+    } catch (e) {
+      print('Errore nel ViewModel durante l\'eliminazione del prodotto: $e');
+      rethrow;
+    }
+  }
 }

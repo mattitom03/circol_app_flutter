@@ -5,26 +5,18 @@ class Product {
   final String nome;
   final String descrizione;
   final double prezzo;
-  final String categoria;
   final int numeroPezzi;
   final bool ordinabile;
   final String? imageUrl;
-  final DateTime dataCreazione;
-  final DateTime? dataAggiornamento;
-  final Map<String, dynamic>? metadata;
 
   const Product({
     required this.id,
     required this.nome,
     required this.descrizione,
     required this.prezzo,
-    required this.categoria,
     required this.numeroPezzi,
     this.ordinabile = true,
     this.imageUrl,
-    required this.dataCreazione,
-    this.dataAggiornamento,
-    this.metadata,
   });
 
   /// Controlla se il prodotto è disponibile
@@ -32,13 +24,6 @@ class Product {
 
   /// Controlla se il prodotto è esaurito
   bool get isEsaurito => numeroPezzi <= 0;
-
-  /// Controlla se è un prodotto nuovo (creato negli ultimi 7 giorni)
-  bool get isNuovo {
-    final now = DateTime.now();
-    final differenza = now.difference(dataCreazione);
-    return differenza.inDays <= 7;
-  }
 
   /// Getter per compatibilità con i fragment esistenti
   String? get immagine => imageUrl;
@@ -51,15 +36,9 @@ class Product {
       nome: map['nome'] ?? '',
       descrizione: map['descrizione'] ?? '',
       prezzo: (map['importo'] ?? 0.0).toDouble(),
-      categoria: map['categoria'] ?? '',
       numeroPezzi: map['numeroPezzi'] ?? 0,
       ordinabile: map['ordinabile'] ?? true,
       imageUrl: map['imageUrl'],
-      dataCreazione: _timestampToDateTime(map['dataCreazione']) ?? DateTime.now(),
-      dataAggiornamento: map['dataAggiornamento'] != null
-          ? _timestampToDateTime(map['dataAggiornamento'])
-          : null,
-      metadata: map['metadata'],
     );
   }
 
@@ -69,16 +48,10 @@ class Product {
       'id': id,
       'nome': nome,
       'descrizione': descrizione,
-      'prezzo': prezzo,
-      'categoria': categoria,
+      'importo': prezzo,
       'numeroPezzi': numeroPezzi,
       'ordinabile': ordinabile,
       'imageUrl': imageUrl,
-      'dataCreazione': Timestamp.fromDate(dataCreazione),
-      'dataAggiornamento': dataAggiornamento != null
-          ? Timestamp.fromDate(dataAggiornamento!)
-          : null,
-      'metadata': metadata,
     };
   }
 
@@ -101,26 +74,18 @@ class Product {
     String? nome,
     String? descrizione,
     double? prezzo,
-    String? categoria,
     int? numeroPezzi,
     bool? ordinabile,
     String? imageUrl,
-    DateTime? dataCreazione,
-    DateTime? dataAggiornamento,
-    Map<String, dynamic>? metadata,
   }) {
     return Product(
       id: id ?? this.id,
       nome: nome ?? this.nome,
       descrizione: descrizione ?? this.descrizione,
       prezzo: prezzo ?? this.prezzo,
-      categoria: categoria ?? this.categoria,
       numeroPezzi: numeroPezzi ?? this.numeroPezzi,
       ordinabile: ordinabile ?? this.ordinabile,
       imageUrl: imageUrl ?? this.imageUrl,
-      dataCreazione: dataCreazione ?? this.dataCreazione,
-      dataAggiornamento: dataAggiornamento ?? this.dataAggiornamento,
-      metadata: metadata ?? this.metadata,
     );
   }
 

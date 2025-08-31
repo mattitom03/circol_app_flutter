@@ -122,6 +122,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
             icon: const Icon(Icons.save),
             onPressed: _saveProduct, // Salva il prodotto
           ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: Colors.red),
+            tooltip: 'Elimina Prodotto',
+            onPressed: () {
+              // Mostra un dialogo di conferma prima di eliminare
+              _showConfirmDeleteDialog(context);
+            },
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -221,6 +229,38 @@ class _EditProductScreenState extends State<EditProductScreen> {
           Text('Tocca per scegliere un\'immagine', style: TextStyle(color: Colors.grey)),
         ],
       ),
+    );
+  }
+
+  void _showConfirmDeleteDialog(BuildContext context) {
+    final authViewModel = context.read<AuthViewModel>();
+    final navigator = Navigator.of(context);
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Conferma Eliminazione'),
+          content: Text('Sei sicuro di voler eliminare il prodotto "${widget.product.nome}"? L\'azione è irreversibile.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Annulla'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () {
+                authViewModel.deleteProduct(widget.product.id).then((_) {
+                  // Chiudi il dialogo e poi la schermata di modifica
+                  navigator.pop(); // Chiude il dialogo
+                  navigator.pop(); // Chiude la EditScreen
+                });
+              },
+              child: const Text('Elimina'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
