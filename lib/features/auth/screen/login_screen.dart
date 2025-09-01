@@ -32,9 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      // 🔥 1. SOLUZIONE PER "BOTTOM OVERFLOWED" 🔥
-      // Usiamo un SingleChildScrollView per rendere la pagina scorrevole
-      // quando appare la tastiera.
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -122,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
 
-                      // 🔥 2. SOLUZIONE PER L'INVIO DA TASTIERA 🔥
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) {
                         if (!authViewModel.isLoading) {

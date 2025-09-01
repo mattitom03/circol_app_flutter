@@ -23,7 +23,6 @@ class ProfiloFragment extends StatelessWidget {
           : ListView(
         padding: const EdgeInsets.all(24.0),
         children: [
-          // --- Sezione Intestazione Profilo ---
           const Icon(Icons.account_circle, size: 80, color: Colors.deepPurple),
           const SizedBox(height: 16),
           Text(
@@ -50,19 +49,16 @@ class ProfiloFragment extends StatelessWidget {
           ),
           const SizedBox(height: 32),
 
-          // --- Sezione Informazioni Account ---
           _buildInfoCard(context, user),
           const SizedBox(height: 24),
 
-          // --- Sezione Azioni (condizionale in base al ruolo) ---
           if (authViewModel.isAdmin)
-            _buildAdminActionsCard(context) // Card per l'admin
+            _buildAdminActionsCard(context)
           else
-            _buildUserActionsCard(context), // Card per l'utente normale
+            _buildUserActionsCard(context),
 
           const SizedBox(height: 24),
 
-          // --- Pulsante di Logout ---
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red.shade400,
@@ -78,8 +74,6 @@ class ProfiloFragment extends StatelessWidget {
     );
   }
 }
-
-// --- FUNZIONI E WIDGET HELPER (FUORI DALLA CLASSE) ---
 
 /// Costruisce la card con le informazioni dell'account (Saldo e Tessera).
 Widget _buildInfoCard(BuildContext context, User user) {

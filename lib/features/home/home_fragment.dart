@@ -8,12 +8,10 @@ class HomeFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Accediamo al ViewModel per prendere i dati dell'utente
     final authViewModel = context.watch<AuthViewModel>();
     final user = authViewModel.currentUser;
-    final movimenti = authViewModel.movimenti; // Prendiamo la lista completa dei movimenti
+    final movimenti = authViewModel.movimenti;
 
-    // 2. Prepariamo i formattatori per data e valuta
     final currencyFormatter = NumberFormat.currency(locale: 'it_IT', symbol: '€');
     final dateFormatter = DateFormat('dd MMMM yyyy', 'it_IT');
 
@@ -27,7 +25,7 @@ class HomeFragment extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Funzionalità non ancora implementata.'),
-                  duration: Duration(seconds: 2), // Il messaggio scompare dopo 2 secondi
+                  duration: Duration(seconds: 2),
                 ),
               );
             },
@@ -39,13 +37,11 @@ class HomeFragment extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            // --- Sezione Saldo ---
             Text(
               'Saldo:',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(
-              // Formattiamo il saldo come valuta
               currencyFormatter.format(user?.saldo ?? 0.0),
               style: const TextStyle(
                 fontSize: 48,
@@ -54,21 +50,18 @@ class HomeFragment extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            // --- Sezione Ultimi Movimenti ---
             Text(
               'Ultimi Movimenti',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
 
-            // Se non ci sono movimenti, mostra un messaggio
             if (movimenti.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Center(child: Text('Nessun movimento registrato.')),
               )
             else
-            // Altrimenti, costruisci la lista
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -87,7 +80,6 @@ class HomeFragment extends StatelessWidget {
                       title: Text(movimento.descrizione),
                       subtitle: Text(dateFormatter.format(movimento.data)),
                       trailing: Text(
-                        // Mostra il segno +/- e formatta la valuta
                         '${isNegative ? '' : '+ '}${currencyFormatter.format(movimento.importo)}',
                         style: TextStyle(
                           color: isNegative ? Colors.red : Colors.green,

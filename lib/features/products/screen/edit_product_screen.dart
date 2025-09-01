@@ -75,7 +75,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     String? finalImageUrl = _currentImageUrl;
 
     try {
-      // 1. Se è stata scelta una nuova immagine, caricala
       if (_selectedImageFile != null) {
         finalImageUrl = await context.read<AuthViewModel>().uploadProductImage(
           _selectedImageFile!,
@@ -83,7 +82,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
         );
       }
 
-      // 2. Crea l'oggetto Product aggiornato con il link finale dell'immagine
       final updatedProduct = widget.product.copyWith(
         nome: _nomeController.text,
         descrizione: _descrizioneController.text,
@@ -92,7 +90,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         imageUrl: finalImageUrl,
         ordinabile: _isOrdinabile,
       );
-      // 3. Salva il prodotto come prima
+      
       await context.read<AuthViewModel>().updateProduct(updatedProduct);
       messenger.showSnackBar(
         const SnackBar(content: Text('Prodotto aggiornato!'), backgroundColor: Colors.green),

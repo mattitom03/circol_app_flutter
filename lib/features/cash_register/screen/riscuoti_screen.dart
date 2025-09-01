@@ -36,7 +36,6 @@ class RiscuotiScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // --- Sezione Utente ---
                   const Text('Utente:', style: TextStyle(fontSize: 18)),
                   const SizedBox(height: 8),
                   if (viewModel.selectedUser != null)
@@ -53,13 +52,11 @@ class RiscuotiScreen extends StatelessWidget {
                     ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                    // 🔥 LOGICA IMPLEMENTATA QUI 🔥
                     onPressed: () => _scanUser(context),
                     child: const Text('Scansiona Utente'),
                   ),
                   const SizedBox(height: 40),
 
-                  // --- Sezione Prodotti ---
                   const Text('Prodotti:', style: TextStyle(fontSize: 18)),
                   const SizedBox(height: 8),
                   Expanded(
@@ -89,7 +86,6 @@ class RiscuotiScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // --- Sezione Totale e Fine ---
                   Text(
                     'Totale: € ${viewModel.total.toStringAsFixed(2)}',
                     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -124,8 +120,6 @@ class RiscuotiScreen extends StatelessWidget {
     );
   }
 }
-
-// --- FUNZIONI HELPER CON LA LOGICA DI SCANSIONE ---
 
 Future<void> _scanUser(BuildContext context) async {
   final viewModel = context.read<RiscuotiViewModel>();

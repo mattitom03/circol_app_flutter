@@ -91,7 +91,6 @@ void _showManageCardDialog(BuildContext context, User user, GestioneTessereViewM
   Widget content;
   List<Widget> actions;
 
-  // --- Caso 1: L'utente ha una richiesta in attesa ---
   if (user.richiestaRinnovoInCorso) {
     title = Text('Gestisci Richiesta - ${user.displayName}');
     content = const Text('L\'utente ha richiesto una nuova tessera. Vuoi approvare o rifiutare la richiesta?');
@@ -100,7 +99,6 @@ void _showManageCardDialog(BuildContext context, User user, GestioneTessereViewM
       ElevatedButton(onPressed: () => viewModel.assegnaTessera(user.uid), child: const Text('Approva')),
     ];
   }
-  // --- Caso 2: L'utente ha già una tessera attiva ---
   else if (user.hasTessera) {
     title = Text('Gestisci Tessera - ${user.displayName}');
     content = const Text('L\'utente ha già una tessera attiva. Puoi rinnovarla o revocarla.');
@@ -109,7 +107,6 @@ void _showManageCardDialog(BuildContext context, User user, GestioneTessereViewM
       ElevatedButton(onPressed: () { /* TODO: Logica Rinnovo */ }, child: const Text('Rinnova')),
     ];
   }
-  // --- Caso 3: L'utente non ha tessera e non ha richieste ---
   else {
     title = Text('Assegna Tessera - ${user.nome}');
     content = const Text('L\'utente non ha una tessera socio. Vuoi assegnargliene una nuova?');

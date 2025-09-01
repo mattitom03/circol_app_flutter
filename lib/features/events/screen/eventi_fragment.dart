@@ -44,8 +44,6 @@ class EventiFragment extends StatelessWidget {
   }
 }
 
-// --- FUNZIONI HELPER (FUORI DALLA CLASSE) ---
-
 Widget _buildEventoCard(BuildContext context, Evento evento, AuthViewModel authViewModel) {
   return Card(
     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
