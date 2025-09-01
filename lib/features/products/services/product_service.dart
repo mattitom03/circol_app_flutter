@@ -108,16 +108,12 @@ class ProductService {
   /// Carica un'immagine su Firebase Storage e ritorna il suo URL di download.
   Future<String> uploadProductImage(File imageFile, String productId) async {
     try {
-      // 1. Crea un riferimento al percorso in cui salvare il file
-      // Es: product_images/ID_PRODOTTO.jpg
       final ref = FirebaseStorage.instance
           .ref('prodotti_imageUrl')
           .child('$productId.jpg');
 
-      // 2. Carica il file
       await ref.putFile(imageFile);
 
-      // 3. Ottieni l'URL per scaricare il file
       final downloadUrl = await ref.getDownloadURL();
 
       return downloadUrl;

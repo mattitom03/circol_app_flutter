@@ -347,9 +347,7 @@ class AuthViewModel extends ChangeNotifier {
       throw Exception('Nessun utente loggato.');
     }
     try {
-      // Passa l'intero oggetto User al service
       await _eventiService.partecipaEvento(eventId, currentUser!);
-      // Opzionale: puoi ricaricare i dati per un feedback immediato
       await refreshAllData();
     } catch (e) {
       rethrow;
@@ -360,7 +358,6 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> eliminaOrdine(String orderId) async {
     try {
       await _ordersService.eliminaOrdine(orderId);
-      // Ricarichiamo tutti i dati per far sparire l'ordine dalla lista nella UI
       await refreshAllData();
     } catch (e) {
       print('Errore nel ViewModel durante l\'eliminazione dell\'ordine: $e');
@@ -371,7 +368,6 @@ class AuthViewModel extends ChangeNotifier {
   /// Gestisce l'intero processo di ricarica del saldo per un utente.
   Future<void> eseguiRicarica(String userId, double importo) async {
     try {
-      // 1. Crea l'oggetto Movimento che rappresenta questa ricarica
       final ricaricaMovimento = Movimento(
         id: '',
         importo: importo,
@@ -381,11 +377,9 @@ class AuthViewModel extends ChangeNotifier {
         userId: userId,
       );
 
-      // 2. Esegui entrambe le operazioni
       await _authService.aggiornaSaldoUtente(userId, importo);
       await _movimentiService.addMovimento(userId, ricaricaMovimento);
 
-      // 3. Ricarica tutti i dati per aggiornare la UI
       await refreshAllData();
     } catch (e) {
       print('Errore nel ViewModel durante la ricarica: $e');
@@ -401,7 +395,6 @@ class AuthViewModel extends ChangeNotifier {
     if (currentUser == null) throw Exception('Utente non loggato');
 
     try {
-      // 1. Prepara i dati per l'ordine
       final orderData = {
         'prodottoId': prodotto.id,
         'nomeProdotto': prodotto.nome,
@@ -413,7 +406,6 @@ class AuthViewModel extends ChangeNotifier {
         'total': prodotto.prezzo,
       };
 
-      // 2. Prepara i dati per il Movimento
       final movimento = Movimento(
         id: '',
         importo: -prodotto.prezzo,
@@ -423,13 +415,10 @@ class AuthViewModel extends ChangeNotifier {
         userId: currentUser!.uid,
       );
 
-      // 3. Esegui TUTTE le operazioni sul database
       await _ordersService.creaOrdine(orderData);
-      // 🔥 CORREZIONE: Chiama addMovimento passando l'ID dell'utente e il movimento
       await _movimentiService.addMovimento(currentUser!.uid, movimento);
       await _authService.aggiornaSaldoUtente(currentUser!.uid, -prodotto.prezzo);
 
-      // 4. Ricarica tutti i dati per aggiornare la UI
       await refreshAllData();
 
     } catch (e) {
@@ -459,13 +448,11 @@ class AuthViewModel extends ChangeNotifier {
 
     const double costoTessera = 3.0;
 
-    // 1. Controlla se il saldo è sufficiente
     if (currentUser!.saldo < costoTessera) {
       throw Exception('Saldo insufficiente per richiedere la tessera.');
     }
 
     try {
-      // 2. Prepara il movimento per registrare la transazione
       final movimentoTessera = Movimento(
         id: '',
         importo: -costoTessera,
@@ -475,17 +462,15 @@ class AuthViewModel extends ChangeNotifier {
         userId: currentUser!.uid,
       );
 
-      // 3. Esegui tutte le operazioni sul database
       await _authService.aggiornaSaldoUtente(currentUser!.uid, -costoTessera);
       await _movimentiService.addMovimento(currentUser!.uid, movimentoTessera);
       await _authService.impostaRichiestaTessera(currentUser!.uid, true);
 
-      // 4. Aggiorna i dati nell'app
       await refreshAllData();
 
     } catch (e) {
       print('Errore durante la richiesta della tessera: $e');
-      rethrow; // Rilancia l'errore per mostrarlo nella UI
+      rethrow;
     }
   }
   /// Gestisce l'invio di un nuovo feedback da parte dell'utente.
@@ -498,7 +483,6 @@ class AuthViewModel extends ChangeNotifier {
       throw Exception('Nessun utente loggato per inviare il feedback.');
     }
 
-    // Prepara la mappa dei dati come nel tuo database
     final feedbackData = {
       'categoria': categoria,
       'titolo': titolo,
@@ -513,7 +497,6 @@ class AuthViewModel extends ChangeNotifier {
     try {
       await _feedbackService.inviaFeedback(feedbackData);
     } catch (e) {
-      // L'errore viene rilanciato per essere mostrato nella UI
       rethrow;
     }
   }
@@ -522,7 +505,6 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> deleteProduct(String productId) async {
     try {
       await _productService.deleteProduct(productId);
-      // Ricarica tutti i dati per far sparire il prodotto dalla lista
       await refreshAllData();
     } catch (e) {
       print('Errore nel ViewModel durante l\'eliminazione del prodotto: $e');

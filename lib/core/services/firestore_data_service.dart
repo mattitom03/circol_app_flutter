@@ -221,11 +221,8 @@ class FirestoreDataService {
           // Prova a convertire ogni documento in un oggetto User
           users.add(User.fromMap(doc.data()));
         } catch (e) {
-          // Se la conversione fallisce, stampa un errore e va avanti
-          print('--- ERRORE DI CONVERSIONE ---');
           print('Impossibile caricare l-utente con ID: ${doc.id}');
           print('Causa dell-errore: $e');
-          print('-----------------------------');
         }
       }
 

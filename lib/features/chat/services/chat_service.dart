@@ -34,7 +34,6 @@ class ChatService {
   Future<void> sendMessage(String conversationId, ChatMessage message) async {
     final batch = _firestore.batch();
 
-    // 1. Aggiunge il nuovo messaggio alla sottocollezione
     final messageRef = _firestore
         .collection('chats')
         .doc(conversationId)
@@ -42,7 +41,6 @@ class ChatService {
         .doc();
     batch.set(messageRef, message.toMap());
 
-    // 2. Aggiorna il documento della conversazione principale
     final conversationRef = _firestore.collection('chats').doc(conversationId);
     batch.update(conversationRef, {
       'lastMessageText': message.text,
@@ -63,10 +61,8 @@ class ChatService {
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      // Se la conversazione esiste già, ritorna il suo ID
       return querySnapshot.docs.first.id;
     } else {
-      // Altrimenti, crea una nuova conversazione
       final newConversation = await _firestore.collection('chats').add({
         'participants': participants,
         'lastMessageText': 'Conversazione avviata',

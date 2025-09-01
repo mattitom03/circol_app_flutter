@@ -12,9 +12,9 @@ class MovimentiService {
       print('Caricamento movimenti per utente: $userId dalla sua sottocollezione');
 
       final querySnapshot = await _firestore
-          .collection('utenti') // 1. Vai alla collezione principale 'utenti'
-          .doc(userId)        // 2. Seleziona il documento dell'utente specifico
-          .collection('movimenti') // 3. Accedi alla sua sottocollezione 'movimenti'
+          .collection('utenti')
+          .doc(userId)
+          .collection('movimenti')
           .orderBy('data', descending: true)
           .limit(20)
           .get();
@@ -34,10 +34,10 @@ class MovimentiService {
   Future<void> addMovimento(String userId, Movimento movimento) async {
     try {
       await _firestore
-          .collection('utenti') // 1. Vai alla collezione 'utenti'
-          .doc(userId)        // 2. Seleziona il documento dell'utente
-          .collection('movimenti') // 3. Accedi alla sua sottocollezione
-          .add(movimento.toMap()); // 4. Aggiungi il nuovo movimento
+          .collection('utenti')
+          .doc(userId)
+          .collection('movimenti')
+          .add(movimento.toMap());
       print('Movimento aggiunto per l\'utente $userId');
     } catch (e) {
       print('Errore nell\'aggiunta movimento: $e');
