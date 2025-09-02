@@ -201,7 +201,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       ),
     );
   }
-  // NUOVO WIDGET HELPER PER L'ANTEPRIMA
+  // WIDGET HELPER PER L'ANTEPRIMA
   Widget _buildImagePreview() {
     if (_selectedImageFile != null) {
       // Mostra la nuova immagine selezionata dal file

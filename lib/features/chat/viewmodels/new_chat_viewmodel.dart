@@ -18,7 +18,6 @@ class NewChatViewModel extends ChangeNotifier {
   Future<void> _fetchAllUsers() async {
     _isLoading = true;
     notifyListeners();
-    // Usiamo il metodo che avevamo già creato per l'admin
     _users = await _dataService.loadAllUsers();
     _isLoading = false;
     notifyListeners();

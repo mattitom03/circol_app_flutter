@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'product_list_ordering_screen.dart'; // Creeremo dopo
-import 'qr_code_screen.dart'; // Creeremo dopo
+import 'product_list_ordering_screen.dart';
+import 'qr_code_screen.dart';
 
 class PagamentoScreen extends StatelessWidget {
   const PagamentoScreen({super.key});

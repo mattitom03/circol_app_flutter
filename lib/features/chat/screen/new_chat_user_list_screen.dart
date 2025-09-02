@@ -10,7 +10,7 @@ class NewChatUserListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usiamo il ViewModel principale solo per sapere chi siamo noi
+    // Usiamo il ViewModel per sapere chi siamo
     final currentUserId = context.read<AuthViewModel>().currentUser!.uid;
 
     return ChangeNotifierProvider(

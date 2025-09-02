@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/evento.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
-import 'admin_event_details_screen.dart'; // Importa la schermata admin che hai già creato
+import 'admin_event_details_screen.dart';
 import 'user_event_details_screen.dart';
 
 class EventiFragment extends StatelessWidget {
@@ -49,7 +49,7 @@ Widget _buildEventoCard(BuildContext context, Evento evento, AuthViewModel authV
     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
     child: ListTile(
       leading: const CircleAvatar(child: Icon(Icons.calendar_month_outlined)),
-      title: Text(evento.nome), // Usa 'nome' o il campo corretto del tuo modello
+      title: Text(evento.nome),
       subtitle: Text(
         evento.descrizione,
         maxLines: 2,
@@ -64,7 +64,7 @@ Widget _buildEventoCard(BuildContext context, Evento evento, AuthViewModel authV
             ),
           );
         } else {
-          // UTENTE: ora va alla schermata di dettaglio
+          // UTENTE: Va alla schermata di dettaglio
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => UserEventDetailsScreen(evento: evento),

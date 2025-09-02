@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
-import 'product_order_screen.dart'; // Creeremo subito dopo
+import 'product_order_screen.dart';
 
 class ProductListForOrderingScreen extends StatelessWidget {
   const ProductListForOrderingScreen({super.key});

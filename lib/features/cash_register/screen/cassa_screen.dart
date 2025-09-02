@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'ricarica_screen.dart'; // Creeremo questo dopo
-import 'riscuoti_screen.dart'; // Creeremo questo dopo
+import 'ricarica_screen.dart';
+import 'riscuoti_screen.dart';
 
 class CassaScreen extends StatelessWidget {
   const CassaScreen({super.key});

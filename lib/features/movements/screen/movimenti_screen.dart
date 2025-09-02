@@ -176,7 +176,7 @@ class MovimentiScreen extends StatelessWidget {
   }
 
   void _showMovimentoDetails(Movimento movimento) {
-    // TODO: Implementare dettagli movimento
+    // in caso serva per dettagli movimento
   }
 
   String _formatDate(DateTime date) {

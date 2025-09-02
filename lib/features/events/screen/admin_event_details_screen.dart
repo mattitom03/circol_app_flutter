@@ -23,7 +23,7 @@ class _AdminEventDetailsScreenState extends State<AdminEventDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.evento.nome), // Usa 'nome' o 'titolo'
+        title: Text(widget.evento.nome),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),

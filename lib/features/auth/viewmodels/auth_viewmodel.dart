@@ -292,9 +292,9 @@ class AuthViewModel extends ChangeNotifier {
       await _testDataService.createTestData(_currentUser!.uid);
       // Ricarica i dati dopo aver creato i dati di test
       await refreshAllData();
-      print('✅ Dati di test creati e ricaricati');
+      print('Dati di test creati e ricaricati');
     } catch (e) {
-      print('❌ Errore nella creazione dati di test: $e');
+      print('Errore nella creazione dati di test: $e');
     }
   }
 

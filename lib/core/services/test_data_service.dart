@@ -16,9 +16,9 @@ class TestDataService {
         _createTestEventi(userId),
         _createTestProducts(),
       ]);
-      print('✅ Dati di test creati con successo!');
+      print('Dati di test creati con successo!');
     } catch (e) {
-      print('❌ Errore nella creazione dati di test: $e');
+      print('Errore nella creazione dati di test: $e');
     }
   }
 
@@ -74,7 +74,7 @@ class TestDataService {
       await _firestore.collection('movimenti').add(movimentoData);
     }
 
-    print('📊 Creati ${movimentiTest.length} movimenti di test');
+    print('Creati ${movimentiTest.length} movimenti di test');
   }
 
   /// Crea eventi di test
@@ -167,7 +167,7 @@ class TestDataService {
       await _firestore.collection('eventi').add(evento.toMap());
     }
 
-    print('📅 Creati ${eventiTest.length} eventi di test');
+    print('Creati ${eventiTest.length} eventi di test');
   }
 
   /// Crea prodotti di test
@@ -219,7 +219,7 @@ class TestDataService {
       await _firestore.collection('products').add(prodotto.toMap());
     }
 
-    print('🛍️ Creati ${prodottiTest.length} prodotti di test');
+    print('Creati ${prodottiTest.length} prodotti di test');
   }
 
   /// Verifica se esistono già dati di test
@@ -269,7 +269,7 @@ class TestDataService {
         await doc.reference.delete();
       }
 
-      print('🧹 Dati di test eliminati');
+      print('Dati di test eliminati');
     } catch (e) {
       print('Errore nell\'eliminazione dati di test: $e');
     }

@@ -6,14 +6,13 @@ import '../../../core/models/chat_conversation.dart';
 import 'new_chat_user_list_screen.dart';
 import 'conversation_screen.dart';
 import 'package:intl/intl.dart';
-import '../viewmodels/chat_viewmodel.dart'; // <-- Importa il nuovo ViewModel
+import '../viewmodels/chat_viewmodel.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Forniamo il nuovo ChatViewModel a questa schermata
     return ChangeNotifierProvider(
       create: (_) => ChatViewModel(),
       child: Scaffold(
@@ -52,7 +51,7 @@ class ChatListScreen extends StatelessWidget {
                     final conv = conversations[index];
 
                     final otherUserId = conv.participants.firstWhere((id) => id != currentUserId, orElse: () => '');
-                    // Usa il metodo del nuovo ChatViewModel per trovare il nome
+                    // Usa metodo del ChatViewModel per trovare il nome
                     final otherUser = chatViewModel.getUserById(otherUserId);
                     final chatTitle = otherUser?.displayName ?? 'Utente';
 
